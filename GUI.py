@@ -60,4 +60,13 @@ while Run:
 			pygame.quit()
 
 		elif event.type == pygame.VIDEORESIZE:
+			LastScreen = (ScreenWidth, ScreenHeight)
+			RefreshCurrentSize()
+			if LastScreen[0] == ScreenWidth:
+				ScreenWidth = int(ScreenHeight / 8 * 10)
+			elif LastScreen[1] == ScreenHeight:
+				ScreenHeight = int(ScreenWidth / 10 * 8)
+			else:
+				ScreenHeight = int(ScreenWidth / 10 * 8)
+			screen = pygame.display.set_mode((ScreenWidth, ScreenHeight), pygame.RESIZABLE)
 			ImageResize()
