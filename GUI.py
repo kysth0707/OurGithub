@@ -12,10 +12,10 @@ screen = pygame.display.set_mode((ScreenWidth, ScreenHeight), pygame.RESIZABLE)
 
 
 def HeightPercent():
-	return ScreenHeight / 1000
+	return ScreenHeight / 800
 
 def WidthPercent():
-	return ScreenHeight / 1000
+	return ScreenWidth / 1000
 
 def ReturnPos(loc : str):
 	return os.getcwd() + loc
@@ -24,7 +24,7 @@ def RefreshCurrentSize():
 	global ScreenWidth, ScreenHeight
 	ScreenWidth, ScreenHeight = pygame.display.get_surface().get_size()
 
-ImageName = []
+ImageName = ["Background", "FollowersAndFavoriteUsers", "MenuRepository", "NewRepositories", "RecentCommit", "TopCommit", "TopStar"]
 ImageDict = {}
 
 def ImageResize():
@@ -32,12 +32,12 @@ def ImageResize():
 	RefreshCurrentSize()
 
 	for ImgName in ImageName:
-		a = Image.open(ReturnPos(f"\\img\\original\\{ImgName}.png"))
-		SizeValue = HeightPercent()
-		b = a.resize((SizeValue, SizeValue))
+		a = Image.open(ReturnPos(f"\\imgs\\original\\{ImgName}.png"))
+		SizeValue = (HeightPercent())
+		b = a.resize((int(SizeValue * a.size[0]), int(SizeValue * a.size[1])))
 
-		b.save(ReturnPos(f"\\img\\edited\\{ImgName}.png"))
-		ImageDict[ImgName] = pygame.image.load(ReturnPos(f"\\img\\edited\\{ImgName}.png"))
+		b.save(ReturnPos(f"\\imgs\\edited\\{ImgName}.png"))
+		ImageDict[ImgName] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\{ImgName}.png"))
 
 
 
@@ -45,6 +45,7 @@ def DrawScreen():
 	global screen
 
 	screen.fill(var.BackgroundColor)
+	screen.blit(ImageDict['Background'], (0, 0))
 
 ImageResize()
 Run = True

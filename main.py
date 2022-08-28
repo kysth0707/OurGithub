@@ -27,3 +27,5 @@ UserData = RequestGet(f"https://api.github.com/users/{GithubUser}")
 print(f"ID : {UserData['login']}")
 print(f"생성 날짜 : {UserData['created_at']}")
 print(f"리포지토리 개수 : {UserData['public_repos']}")
+# avatar_url
+# followers_url
