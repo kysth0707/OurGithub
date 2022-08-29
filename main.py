@@ -33,6 +33,6 @@ UserData = RequestGet(f"https://api.github.com/users/{GithubUser}")
 print(f"ID : {UserData['login']}")
 print(f"생성 날짜 : {UserData['created_at']}")
 print(f"리포지토리 개수 : {UserData['public_repos']}")
-RequestImageGet(UserData['avatar_url'], ReturnPos(f"\\imgs\\profiles\\{GithubUser}.png"))
+RequestImageGet(UserData['avatar_url'], ReturnPos(f"\\imgs\\profiles\\MyProfile.png"))
 # avatar_url
 # followers_url
