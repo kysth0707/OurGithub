@@ -8,5 +8,5 @@
 > 틀 구성 ( 위 이미지 )
 
 2일차
-> 프로필과 텍스트 배치
-![image](https://user-images.githubusercontent.com/83905675/187144979-58591447-ca1b-4d5c-86b8-3a882504bdf4.png)
+> 틀 만들기 1
+![image](https://user-images.githubusercontent.com/83905675/187194976-4f405bb0-bf6b-4a54-a2af-846351893a6d.png)

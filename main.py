@@ -34,5 +34,12 @@ print(f"ID : {UserData['login']}")
 print(f"생성 날짜 : {UserData['created_at']}")
 print(f"리포지토리 개수 : {UserData['public_repos']}")
 RequestImageGet(UserData['avatar_url'], ReturnPos(f"\\imgs\\profiles\\MyProfile.png"))
+
+FollowerData = RequestGet(f"https://api.github.com/users/{GithubUser}/followers")
+for i in range(3):
+	try:
+		RequestImageGet(FollowerData[i]['avatar_url'], ReturnPos(f"\\imgs\\profiles\\Followers-{FollowerData[i]['login']}.png"))
+	except:
+		pass
 # avatar_url
 # followers_url
