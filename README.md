@@ -9,3 +9,4 @@
 
 2일차
 > 프로필과 텍스트 배치
+![image](https://user-images.githubusercontent.com/83905675/187144979-58591447-ca1b-4d5c-86b8-3a882504bdf4.png)
