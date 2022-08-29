@@ -14,25 +14,19 @@ GithubUser = "kysth0707"
 
 
 
-GithubRepos = RequestGet(f"https://api.github.com/users/{GithubUser}/repos")
+# GithubRepos = RequestGet(f"https://api.github.com/users/{GithubUser}/repos")
 
-f = open(ReturnPos(f"\\Data.txt"), "w", encoding="utf-8")
+# for i in range(len(GithubRepos)):
+# 	RepoName = GithubRepos[i]['name']
+# 	IsFork = GithubRepos[i]['fork']
 
-for i in range(len(GithubRepos)):
-	RepoName = GithubRepos[i]['name']
-	IsFork = GithubRepos[i]['fork']
-	StarCount = GithubRepos[i]['stargazers_count']
+# 	Commits = RequestGet(f"https://api.github.com/repos/{GithubUser}/{RepoName}/commits")
+# 	try:
+# 		LastCommit = Commits[0]['commit']['author']['date']
+# 	except:
+# 		LastCommit = "?"
 
-	Commits = RequestGet(f"https://api.github.com/repos/{GithubUser}/{RepoName}/commits")
-	try:
-		LastCommit = Commits[0]['commit']['author']['date']
-	except:
-		LastCommit = "?"
-
-	if IsFork == False:
-		f.write(f"{GithubUser},{RepoName},{StarCount},{LastCommit}\n")
-
-f.close()
+# 	print(f"{RepoName} / fork : {IsFork} / LastCommit = {LastCommit}")
 
 print("\n")
 UserData = RequestGet(f"https://api.github.com/users/{GithubUser}")
