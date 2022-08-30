@@ -10,3 +10,7 @@
 2일차
 > 틀 만들기 1
 ![image](https://user-images.githubusercontent.com/83905675/187194976-4f405bb0-bf6b-4a54-a2af-846351893a6d.png)
+
+3일차
+> 자기 Repo 목록 가져와서 Bubble Sort 로 정렬
+![image](https://user-images.githubusercontent.com/83905675/187392727-8ad36af5-16cf-4fab-a3d0-9269851b68b3.png)

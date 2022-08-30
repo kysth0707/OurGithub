@@ -1,6 +1,41 @@
 import pygame
 from PIL import Image
 import os
+import time
+
+
+# ==================================================
+def ReturnPos(loc : str):
+	return os.getcwd() + loc
+
+def ReturnLimitText(TextValue, Limit):
+	if len(TextValue) > Limit + 1:
+		TextValue = TextValue[:Limit]+"..."
+	return TextValue
+
+def SortWith(Value, Other, Other2):
+	for x in range(len(Value)):
+		for y in range(len(Value)):
+			if Value[x] > Value[y]:
+				Value[x], Value[y] = Value[y], Value[x]
+				Other[x], Other[y] = Other[y], Other[x]
+				Other2[x], Other2[y] = Other2[y], Other2[x]
+	return Value, Other, Other2
+
+MyRepoName = []
+MyRepoStar = []
+MyRepoTime = []
+
+f = open(ReturnPos(f"\\Data.txt"), "r", encoding="utf-8")
+Datas = f.readlines()
+for i in range(len(Datas)):
+	Val = Datas[i][:-1].split(',')
+	MyRepoName.append(Val[1])
+	MyRepoStar.append(int(Val[2]))
+	MyRepoTime.append(Val[3])
+
+MyRepoStar, MyRepoName, MyRepoTime = SortWith(MyRepoStar, MyRepoName, MyRepoTime)
+
 
 #  ================ vars =======================
 
@@ -31,9 +66,6 @@ def WidthPercent():
 
 def ConvertWidthPercent(x, y):
 	return (int(x * WidthPercent()), int(y * WidthPercent()))
-
-def ReturnPos(loc : str):
-	return os.getcwd() + loc
 
 def RefreshCurrentSize():
 	global ScreenWidth, ScreenHeight
@@ -111,22 +143,35 @@ def DrawRepositories():
 	# Top Stars
 	for x in range(2):
 		for y in range(2):
-			DrawTopStar(380 + x * 330, 100 + y * 100, "RepoName", "RepoOwner", x * 10 + y * 100)
+			DrawTopStar(380 + x * 330, 100 + y * 100 + AnimationValue(), "RepoName", "RepoOwner", x * 10 + y * 100)
 			
 # ==================================================================
 
 def DrawMenuUser(x, y, Name, Image):
+	Name = ReturnLimitText(Name, 5)
 	screen.blit(ImageDict['FollowersAndFavoriteUsers'], ConvertWidthPercent(x, y))
 	screen.blit(Image, ConvertWidthPercent(x + 11, y + 10))
-	if len(Name) > 6:
-		Name = Name[:5]+"..."
 	
 	DrawText(Name, (x + 7, y + 65), NormalGray, 12,  True)
+
+def DrawMenuRepository(x, y, RepoName, RepoOwner, StarCount):
+	RepoName = ReturnLimitText(RepoName, 10)
+	RepoOwner = ReturnLimitText(RepoOwner, 10)
+	screen.blit(ImageDict['MenuRepository'], ConvertWidthPercent(x, y))
+	DrawText(RepoName, (x + 10, y + 7), LightGray, 16,  True)
+	DrawText(RepoOwner, (x + 10, y + 33), NormalGray, 12)
+	DrawText(str(StarCount), (x + 145, y + 10), LightGray, 12, IsBold=True, IsRightJustify=True)
 
 def DrawMenu():
 	# Followers
 	for i in range(3):
-		DrawMenuUser(14 + i * 90, 170, FollowerKeys[i], FollowersDict[FollowerKeys[i]])
+		DrawMenuUser(14 + i * 90, 170 + AnimationValue(), FollowerKeys[i], FollowersDict[FollowerKeys[i]])
+
+	LoopCnt = 4
+	if len(MyRepoName) < 4:
+		LoopCnt = len(MyRepoName)
+	for i in range(4):
+		DrawMenuRepository(14, 325 + AnimationValue() + i * 67, MyRepoName[i], MyID, MyRepoStar[i])
 
 
 # ==================================================================
@@ -135,8 +180,8 @@ def DrawNotice():
 	DrawText(NoticeText, (280, 10), White, 16)
 
 def DrawProfile():
-	screen.blit(ImageDict['MyProfile'], ConvertWidthPercent(20, 7))
-	DrawText(MyID, (140, 30), White, 17)
+	screen.blit(ImageDict['MyProfile'], ConvertWidthPercent(20, 7 + AnimationValue()))
+	DrawText(MyID, (140, 30 + AnimationValue()), White, 17)
 
 def DrawScreen():
 	global screen
@@ -150,9 +195,30 @@ def DrawScreen():
 
 # ==================================================================
 
+IsAnimation = True
+AniYValue = 10
+AniTargetValue = 0
+StartTime = time.time()
+
+def AnimationValue():
+	if IsAnimation:
+		return AniYValue
+	else:
+		return 0
+
+def MathLerp(a, b, t):
+	return a + (b - a) * t
+
+# ==================================================================
+
 ImageResize()
 Run = True
 while Run:
+	if IsAnimation:
+		AniYValue = MathLerp(AniYValue, AniTargetValue, 0.1)
+		if time.time() - StartTime > 1:
+			IsAnimation = False
+
 	DrawScreen()
 
 	ShowMousePos()
