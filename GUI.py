@@ -1,12 +1,48 @@
+from ast import expr_context
 import pygame
 from PIL import Image
 import os
 import time
+import datetime
+
+def ReturnPos(loc : str):
+	return os.getcwd() + loc
+
 
 
 # ==================================================
-def ReturnPos(loc : str):
-	return os.getcwd() + loc
+
+def GetLastCommit():
+	pass
+
+f = open(ReturnPos(f"\\Data.txt"), "r", encoding="utf-8")
+Dates = []
+Datas = f.readlines()
+for i in range(len(Datas)):
+	Val = Datas[i][:-1].split(',')
+	try:
+		Dates.append(datetime.datetime.strptime(Val[3], "%Y-%m-%dT%H:%M:%SZ"))
+	except:
+		Dates.append(None)
+f.close()
+
+LastTime = None
+for i in range(len(Dates)):
+	if Dates[i] != None:
+		if LastTime == None:
+			LastTime = Dates[i]
+		elif Dates[i] > LastTime:
+			LastTime = Dates[i]
+
+if LastTime == None:
+	LastCommitDate = "X"
+else:
+	LastCommitDate = LastTime
+
+print(LastCommitDate)
+
+
+# ==================================================
 
 def ReturnLimitText(TextValue, Limit):
 	if len(TextValue) > Limit + 1:
@@ -73,7 +109,7 @@ def RefreshCurrentSize():
 
 # ==================================================================
 
-ImageName = ["Background", "FollowersAndFavoriteUsers", "MenuRepository", "NewRepositories", "RecentCommit", "TopCommit", "TopStar", "MyProfile"]
+ImageName = ["Background", "FollowersAndFavoriteUsers", "MenuRepository", "NewRepositories", "RecentCommit", "TopCommit", "TopStar", "MyProfile", "PopUp"]
 ImageResizeDict = {"MyProfile" : (75, 75)}
 ImageDict = {}
 FollowersDict = {}
@@ -192,10 +228,24 @@ def DrawScreen():
 	DrawProfile()
 	DrawRepositories()
 	DrawMenu()
+	DrawPopUp()
 
 # ==================================================================
 
-IsAnimation = True
+IsPopUp = False
+
+def PopUp(Title, Subtitle):
+	global IsPopUp
+	IsPopUp = True
+	pass
+
+def DrawPopUp():
+	if IsPopUp:
+		screen.blit(ImageDict['PopUp'], (0, 0))
+
+# ==================================================================
+
+IsAnimation = False
 AniYValue = 10
 AniTargetValue = 0
 StartTime = time.time()
@@ -241,3 +291,10 @@ while Run:
 				ScreenHeight = int(ScreenWidth / 10 * 8)
 			screen = pygame.display.set_mode((ScreenWidth, ScreenHeight), pygame.RESIZABLE)
 			ImageResize()
+
+		elif event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_ESCAPE:
+				if IsPopUp:
+					IsPopUp = False
+				else:
+					PopUp("ㅎㅇ", "ㅎㅇ")
