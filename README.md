@@ -14,3 +14,7 @@
 3일차
 > 자기 Repo 목록 가져와서 버블정렬로 정렬
 ![image](https://user-images.githubusercontent.com/83905675/187392727-8ad36af5-16cf-4fab-a3d0-9269851b68b3.png)
+
+4일차
+> 최종 커밋일 추가 및 PopUp 이미지 추가
+![image](https://user-images.githubusercontent.com/83905675/187698349-0f8e29e2-1889-4207-a9ff-dd16a411d609.png)

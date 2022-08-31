@@ -13,7 +13,7 @@ def ReturnPos(loc : str):
 # ==================================================
 
 def GetLastCommit():
-	pass
+	return LastCommitDate
 
 f = open(ReturnPos(f"\\Data.txt"), "r", encoding="utf-8")
 Dates = []
@@ -21,7 +21,7 @@ Datas = f.readlines()
 for i in range(len(Datas)):
 	Val = Datas[i][:-1].split(',')
 	try:
-		Dates.append(datetime.datetime.strptime(Val[3], "%Y-%m-%dT%H:%M:%SZ"))
+		Dates.append(datetime.datetime.strptime(Val[3], "%Y-%m-%dT%H:%M:%SZ") + datetime.timedelta(hours=9))
 	except:
 		Dates.append(None)
 f.close()
@@ -199,10 +199,14 @@ def DrawMenuRepository(x, y, RepoName, RepoOwner, StarCount):
 	DrawText(str(StarCount), (x + 145, y + 10), LightGray, 12, IsBold=True, IsRightJustify=True)
 
 def DrawMenu():
+	# LastCommit
+	DrawText(str(LastCommitDate).split(' ')[0], (250, 99), White, 20, IsRightJustify=True)
+	
 	# Followers
 	for i in range(3):
 		DrawMenuUser(14 + i * 90, 170 + AnimationValue(), FollowerKeys[i], FollowersDict[FollowerKeys[i]])
 
+	# Repositories
 	LoopCnt = 4
 	if len(MyRepoName) < 4:
 		LoopCnt = len(MyRepoName)
@@ -228,6 +232,7 @@ def DrawScreen():
 	DrawProfile()
 	DrawRepositories()
 	DrawMenu()
+
 	DrawPopUp()
 
 # ==================================================================
