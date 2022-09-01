@@ -1,9 +1,10 @@
-from ast import expr_context
 import pygame
 from PIL import Image
 import os
 import time
-import datetime
+from ModuleGUIFunc import LastCommitRefresh, MyRepoRefresh, ReturnLimitText, GetDatas
+
+Run = True
 
 def ReturnPos(loc : str):
 	return os.getcwd() + loc
@@ -27,77 +28,26 @@ def ReturnPos(loc : str):
 def GetLastCommit():
 	return LastCommitDate
 
-f = open(ReturnPos(f"\\Datas\\MyRepo.txt"), "r", encoding="utf-8")
-Dates = []
-Datas = f.readlines()
-for i in range(len(Datas)):
-	Val = Datas[i][:-1].split(',')
-	try:
-		Dates.append(datetime.datetime.strptime(Val[3], "%Y-%m-%dT%H:%M:%SZ") + datetime.timedelta(hours=9))
-	except:
-		Dates.append(None)
-f.close()
-
-LastTime = None
-for i in range(len(Dates)):
-	if Dates[i] != None:
-		if LastTime == None:
-			LastTime = Dates[i]
-		elif Dates[i] > LastTime:
-			LastTime = Dates[i]
-
-if LastTime == None:
-	LastCommitDate = "X"
-else:
-	LastCommitDate = LastTime
-
-print(LastCommitDate)
-
+LastCommitDate = LastCommitRefresh()
 
 # ==================================================
 
-def ReturnLimitText(TextValue, Limit):
-	if len(TextValue) > Limit + 1:
-		TextValue = TextValue[:Limit]+"..."
-	return TextValue
-
-def SortWith(Value, Other, Other2):
-	for x in range(len(Value)):
-		for y in range(len(Value)):
-			if Value[x] > Value[y]:
-				Value[x], Value[y] = Value[y], Value[x]
-				Other[x], Other[y] = Other[y], Other[x]
-				Other2[x], Other2[y] = Other2[y], Other2[x]
-	return Value, Other, Other2
-
-MyRepoName = []
-MyRepoStar = []
-MyRepoTime = []
-
-f = open(ReturnPos(f"\\Datas\\MyRepo.txt"), "r", encoding="utf-8")
-Datas = f.readlines()
-for i in range(len(Datas)):
-	Val = Datas[i][:-1].split(',')
-	MyRepoName.append(Val[1])
-	MyRepoStar.append(int(Val[2]))
-	MyRepoTime.append(Val[3])
-
-MyRepoStar, MyRepoName, MyRepoTime = SortWith(MyRepoStar, MyRepoName, MyRepoTime)
-
+MyRepoStar, MyRepoName, MyRepoTime = MyRepoRefresh()
 
 #  ================ vars =======================
 
 BackgroundColor = (240, 240, 240)
-MyID = "kysth0707"
+# MyID = "kysth0707"
 
 Black = (0, 0, 0)
 White = (255, 255, 255)
 LightGray = (195, 195, 195)
 NormalGray = (180, 180, 180)
-NoticeText = f"[ 공지 ]   공지 테스트"
+# NoticeText = f"[ 공지 ]   공지 테스트"
+
+MyID, NoticeText = GetDatas()
 
 #  =============================================
-
 
 pygame.init()
 
@@ -130,7 +80,6 @@ FavoriteUsersDict = {}
 FavoriteUsersKeys = []
 
 def ImageResize():
-	global ImageName, ImageDict
 	RefreshCurrentSize()
 
 	for ImgName in ImageName:
@@ -296,8 +245,12 @@ def MathLerp(a, b, t):
 # ==================================================================
 
 ImageResize()
-Run = True
+
+LastTime = time.time()
 while Run:
+	if time.time() - LastTime > 5:
+		MyID, NoticeText = GetDatas()
+		LastTime = time.time()
 	if IsAnimation:
 		AniYValue = MathLerp(AniYValue, AniTargetValue, 0.1)
 		if time.time() - StartTime > 1:

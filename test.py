@@ -1,4 +1,4 @@
-from RequestFunctions import RequestGet, SetTokenAPI
+from ModuleRequestFunc import RequestGet, SetTokenAPI
 
 GithubAPIToken = ""
 with open("E:\\GithubProjects\\githubapitoken.txt", "r", encoding="utf-8") as f:
