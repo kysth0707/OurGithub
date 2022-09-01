@@ -18,3 +18,7 @@
 4일차
 > 최종 커밋일 추가 및 PopUp 이미지 추가
 ![image](https://user-images.githubusercontent.com/83905675/187698349-0f8e29e2-1889-4207-a9ff-dd16a411d609.png)
+
+5일차
+> Favorite Users 기능 추가
+![image](https://user-images.githubusercontent.com/83905675/187903958-ca7d4fc1-04e5-4d89-9878-c19b8cce7999.png)
