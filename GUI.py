@@ -8,14 +8,26 @@ import datetime
 def ReturnPos(loc : str):
 	return os.getcwd() + loc
 
+# =================================================
 
+# def GetFavoriteUsers():
+# 	return FavoriteUsers
+
+# f = open(ReturnPos(f"\\Datas\\FavoriteUsers.txt"), "r", encoding="utf-8")
+# FavoriteUsers = []
+# Datas = f.readlines()
+# for i in range(len(Datas)):
+# 	if i >= 3:
+# 		break
+# 	FavoriteUsers.append(Datas[i][:-1])
+# f.close()
 
 # ==================================================
 
 def GetLastCommit():
 	return LastCommitDate
 
-f = open(ReturnPos(f"\\Data.txt"), "r", encoding="utf-8")
+f = open(ReturnPos(f"\\Datas\\MyRepo.txt"), "r", encoding="utf-8")
 Dates = []
 Datas = f.readlines()
 for i in range(len(Datas)):
@@ -62,7 +74,7 @@ MyRepoName = []
 MyRepoStar = []
 MyRepoTime = []
 
-f = open(ReturnPos(f"\\Data.txt"), "r", encoding="utf-8")
+f = open(ReturnPos(f"\\Datas\\MyRepo.txt"), "r", encoding="utf-8")
 Datas = f.readlines()
 for i in range(len(Datas)):
 	Val = Datas[i][:-1].split(',')
@@ -82,7 +94,7 @@ Black = (0, 0, 0)
 White = (255, 255, 255)
 LightGray = (195, 195, 195)
 NormalGray = (180, 180, 180)
-NoticeText = f"[ 공지 ]   이번 주의 Top Commiter 은 {MyID} 님 입니다! 축하합니다!"
+NoticeText = f"[ 공지 ]   공지 테스트"
 
 #  =============================================
 
@@ -114,6 +126,8 @@ ImageResizeDict = {"MyProfile" : (75, 75)}
 ImageDict = {}
 FollowersDict = {}
 FollowerKeys = []
+FavoriteUsersDict = {}
+FavoriteUsersKeys = []
 
 def ImageResize():
 	global ImageName, ImageDict
@@ -149,7 +163,18 @@ def ImageResize():
 			b.save(ReturnPos(f"\\imgs\\edited\\Followers-{Name}.png"))
 			FollowersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Followers-{Name}.png"))
 			FollowerKeys.append(Name)
-	# for i in range(3):
+
+		elif DataName[:9] == "Favorite-":
+			Name = DataName[9:][:-4]
+			a = Image.open(ReturnPos(f"\\imgs\\profiles\\Favorite-{Name}.png"))
+			
+
+			SizeValue = HeightPercent()
+			b = a.resize((int(SizeValue * 40), int(SizeValue * 40)))
+
+			b.save(ReturnPos(f"\\imgs\\edited\\Favorite-{Name}.png"))
+			FavoriteUsersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Favorite-{Name}.png"))
+			FavoriteUsersKeys.append(Name)
 
 
 # ==================================================================
@@ -212,6 +237,10 @@ def DrawMenu():
 		LoopCnt = len(MyRepoName)
 	for i in range(4):
 		DrawMenuRepository(14, 325 + AnimationValue() + i * 67, MyRepoName[i], MyID, MyRepoStar[i])
+
+	# Favorites
+	for i in range(3):
+		DrawMenuUser(14 + i * 90, 630 + AnimationValue(), FavoriteUsersKeys[i], FavoriteUsersDict[FavoriteUsersKeys[i]])
 
 
 # ==================================================================
