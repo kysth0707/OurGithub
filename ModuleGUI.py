@@ -171,7 +171,10 @@ class OutGithubGUI:
 		if len(self.MyRepoName) < 4:
 			LoopCnt = len(self.MyRepoName)
 		for i in range(4):
-			self.DrawMenuRepository(14, 325 + self.AnimationValue() + i * 67, self.MyRepoName[i], self.MyID, self.MyRepoStar[i])
+			try:
+				self.DrawMenuRepository(14, 325 + self.AnimationValue() + i * 67, self.MyRepoName[i], self.MyID, self.MyRepoStar[i])
+			except:
+				self.DrawMenuRepository(14, 325 + self.AnimationValue() + i * 67, "?", "?", "?")
 
 		# Favorites
 		for i in range(3):
