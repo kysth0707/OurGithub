@@ -26,3 +26,6 @@
 6일차
 > class 화 및 중간 수정 가능케 변경
 ![image](https://user-images.githubusercontent.com/83905675/188092910-ef187e33-b658-4e41-9bc1-25e64dff42fe.png)
+> DB 연동
+![image](https://user-images.githubusercontent.com/83905675/188177614-dded957e-eaaf-46a3-9752-192d3ae541da.png)
+![image](https://user-images.githubusercontent.com/83905675/188177636-cabe0611-9b73-46c0-aee3-2bce2ff3d8f2.png)
