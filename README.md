@@ -22,3 +22,7 @@
 5일차
 > Favorite Users 기능 추가
 ![image](https://user-images.githubusercontent.com/83905675/187903958-ca7d4fc1-04e5-4d89-9878-c19b8cce7999.png)
+
+6일차
+> class 화 및 중간 수정 가능케 변경
+![image](https://user-images.githubusercontent.com/83905675/188092910-ef187e33-b658-4e41-9bc1-25e64dff42fe.png)
