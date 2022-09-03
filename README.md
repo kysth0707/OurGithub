@@ -29,3 +29,7 @@
 > DB 연동
 ![image](https://user-images.githubusercontent.com/83905675/188177614-dded957e-eaaf-46a3-9752-192d3ae541da.png)
 ![image](https://user-images.githubusercontent.com/83905675/188177636-cabe0611-9b73-46c0-aee3-2bce2ff3d8f2.png)
+
+7일차
+> request 로 유저의 이번 주 contribution 값 가져오기
+![image](https://user-images.githubusercontent.com/83905675/188277916-054da9cb-5506-4145-8165-33539d90c457.png)
