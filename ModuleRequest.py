@@ -4,9 +4,13 @@ import os
 def ReturnPos(loc : str):
 	return os.getcwd() + loc
 
+domain = "http://localhost:8000"
 
+def Domain(txt):
+	return domain+txt
 
-
+def GetTopStar():
+	return RequestGet(Domain("/topstars/"))
 
 def GetRepoDatas(GithubUser):
 	GithubAPIToken = ""

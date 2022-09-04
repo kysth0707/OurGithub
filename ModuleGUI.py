@@ -3,6 +3,7 @@ from PIL import Image
 import os
 import time
 from ModuleGUIFunc import LastCommitRefresh, MyRepoRefresh, ReturnLimitText, GetDatas
+import ModuleRequest
 
 def ReturnPos(loc : str):
 	return os.getcwd() + loc
@@ -30,7 +31,12 @@ class OutGithubGUI:
 	FavoriteUsersDict = {}
 	FavoriteUsersKeys = []
 
-	def __init__(self) -> None:
+	TopStars = []
+
+	def __init__(self, ID) -> None:
+		self.MyID = ID
+		ModuleRequest.GetRepoDatas(ID)
+		# 나중에 .txt 말고 변수로 저장하게 변경시키기
 		self.LastCommitDate = LastCommitRefresh()		
 		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
 
@@ -41,6 +47,9 @@ class OutGithubGUI:
 		self.screen = pygame.display.set_mode((self.ScreenWidth, self.ScreenHeight), pygame.RESIZABLE)
 
 		self.ImageResize()
+
+		self.TopStars = ModuleRequest.GetTopStar()
+
 
 	# ==================================================
 
@@ -137,9 +146,14 @@ class OutGithubGUI:
 
 	def DrawRepositories(self):
 		# Top Stars
+		i = 0
 		for x in range(2):
 			for y in range(2):
-				self.DrawTopStar(380 + x * 330, 100 + y * 100 + self.AnimationValue(), "RepoName", "RepoOwner", x * 10 + y * 100)
+				RepoName = self.TopStars[i]['RepoName']
+				RepoOwner = self.TopStars[i]['ID']
+				Star = self.TopStars[i]['Star']
+				self.DrawTopStar(380 + x * 330, 100 + y * 100 + self.AnimationValue(), RepoName, RepoOwner, Star)
+				i += 1
 				
 	# ==================================================================
 
@@ -167,9 +181,6 @@ class OutGithubGUI:
 			self.DrawMenuUser(14 + i * 90, 170 + self.AnimationValue(), self.FollowerKeys[i], self.FollowersDict[self.FollowerKeys[i]])
 
 		# Repositories
-		LoopCnt = 4
-		if len(self.MyRepoName) < 4:
-			LoopCnt = len(self.MyRepoName)
 		for i in range(4):
 			try:
 				self.DrawMenuRepository(14, 325 + self.AnimationValue() + i * 67, self.MyRepoName[i], self.MyID, self.MyRepoStar[i])

@@ -93,7 +93,7 @@ def AddUser(ID):
 
 def UpdateContributions(ID):
 	Value = ModuleContributions.Get(ID)
-	print(Value)
+	# print(Value)
 
 	Num = GetNumBy("contris", "Num")
 	AlreadyExist = False
@@ -123,23 +123,23 @@ def GetContributions(ID):
 
 def GetRepoDatas(ID):
 	Value = GetData(f"SELECT * FROM repos WHERE ID = '{ID}';")
-	print(Value)
-	return Value
+	# print(Value)
+	if len(Value) != 0:
+		return Value
+	else:
+		return False
 	# pass
 
 def GetTopStars():
 	TopStars = GetData("SELECT * FROM repos ORDER BY Star DESC LIMIT 4;")
-	print(TopStars)
 	return TopStars
 
 def GetRecentCommits():
 	RecentCommits = GetData("SELECT * FROM repos ORDER BY LastCommit DESC LIMIT 4;")
-	print(RecentCommits)
 	return RecentCommits
 
 def GetNewRepos():	
 	NewRepos = GetData("SELECT * FROM repos ORDER BY CreateDate DESC LIMIT 4;")
-	print(NewRepos)
 	return NewRepos
 
 # AddUser("kysth0707")
