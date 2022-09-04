@@ -33,3 +33,6 @@
 7일차
 > request 로 유저의 이번 주 contribution 값 가져오기
 ![image](https://user-images.githubusercontent.com/83905675/188277916-054da9cb-5506-4145-8165-33539d90c457.png)
+
+8일차
+> DB 많이 연동 및 request 약간 연동
