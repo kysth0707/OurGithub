@@ -35,7 +35,7 @@ def GetRepoDatas(GithubUser):
 			LastCommit = "?"
 
 		if IsFork == False:
-			# f.write(f"{GithubUser},{RepoName},{StarCount},{LastCommit}\n")
+			f.write(f"{GithubUser},{RepoName},{StarCount},{LastCommit}\n")
 			ReturnDatas.append({'ID' : GithubUser, 'RepoName' : RepoName, 'Star' : StarCount, 'LastCommit' : LastCommit, 'CreatedAt' : CreatedAt})
 
 	f.close()

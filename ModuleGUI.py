@@ -4,6 +4,7 @@ import os
 import time
 from ModuleGUIFunc import LastCommitRefresh, MyRepoRefresh, ReturnLimitText, GetDatas
 import ModuleRequest
+from threading import Thread
 
 def ReturnPos(loc : str):
 	return os.getcwd() + loc
@@ -33,12 +34,21 @@ class OutGithubGUI:
 
 	TopStars = []
 
+	def RepoRefresh(self):
+		ModuleRequest.GetRepoDatas(self.MyID)
+		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
+		self.LastCommitDate = LastCommitRefresh()
+
 	def __init__(self, ID) -> None:
 		self.MyID = ID
-		ModuleRequest.GetRepoDatas(ID)
+		# ModuleRequest.GetRepoDatas(ID)
 		# 나중에 .txt 말고 변수로 저장하게 변경시키기
-		self.LastCommitDate = LastCommitRefresh()		
 		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
+		self.LastCommitDate = LastCommitRefresh()
+
+		temp = Thread(target=self.RepoRefresh, daemon=True)
+		temp.daemon = True
+		temp.start()
 
 		pygame.init()
 
