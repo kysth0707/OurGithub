@@ -12,6 +12,9 @@ def Domain(txt):
 def GetTopStar():
 	return RequestGet(Domain("/topstars/"))
 
+def GetTopCommiters():
+	return RequestGet(Domain("/topcommiters/"))
+
 def GetRepoDatas(GithubUser):
 	GithubAPIToken = ""
 	with open("E:\\GithubProjects\\githubapitoken.txt", "r", encoding="utf-8") as f:

@@ -134,6 +134,10 @@ def GetTopStars():
 	TopStars = GetData("SELECT * FROM repos ORDER BY Star DESC LIMIT 4;")
 	return TopStars
 
+def GetTopCommiters():
+	TopCommiters = GetData("SELECT * FROM contris ORDER BY Sum DESC LIMIT 4;")
+	return TopCommiters
+
 def GetRecentCommits():
 	RecentCommits = GetData("SELECT * FROM repos ORDER BY LastCommit DESC LIMIT 4;")
 	return RecentCommits

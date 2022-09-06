@@ -53,6 +53,11 @@ def c( request : Request):
 	# IP : request.client.host
 	return ModuleDB.GetTopStars()
 
+@app.get('/topcommiters/') #get repo
+def c( request : Request):
+	# IP : request.client.host
+	return ModuleDB.GetTopCommiters()
+
 @app.get('/recentcommits/') #get repo
 def d(request : Request):
 	# IP : request.client.host

@@ -33,6 +33,7 @@ class OutGithubGUI:
 	FavoriteUsersKeys = []
 
 	TopStars = []
+	TopCommits = []
 
 	def RepoRefresh(self):
 		ModuleRequest.GetRepoDatas(self.MyID)
@@ -59,6 +60,7 @@ class OutGithubGUI:
 		self.ImageResize()
 
 		self.TopStars = ModuleRequest.GetTopStar()
+		self.TopCommits = ModuleRequest.GetTopCommiters()
 
 
 	# ==================================================
@@ -153,16 +155,36 @@ class OutGithubGUI:
 		self.DrawText(RepoOwner, (x + 20, y + 50), self.NormalGray, 12)
 		self.DrawText(str(StarCount), (x + 195, y + 15), self.LightGray, 12, IsBold=True, IsRightJustify=True)
 
+	def DrawTopCommiter(self, x, y, RepoName, RepoOwner):
+		self.screen.blit(self.ImageDict['TopCommit'], self.ConvertWidthPercent(x, y))
+		self.DrawText(RepoName, (x + 20, y + 15), self.LightGray, 16,  True)
+		self.DrawText(RepoOwner, (x + 20, y + 50), self.NormalGray, 12)
+
 
 	def DrawRepositories(self):
 		# Top Stars
 		i = 0
 		for x in range(2):
 			for y in range(2):
-				RepoName = self.TopStars[i]['RepoName']
-				RepoOwner = self.TopStars[i]['ID']
-				Star = self.TopStars[i]['Star']
-				self.DrawTopStar(380 + x * 330, 100 + y * 100 + self.AnimationValue(), RepoName, RepoOwner, Star)
+				try:
+					RepoName = self.TopStars[i]['RepoName']
+					RepoOwner = self.TopStars[i]['ID']
+					Star = self.TopStars[i]['Star']
+					self.DrawTopStar(380 + x * 330, 100 + y * 100 + self.AnimationValue(), RepoName, RepoOwner, Star)
+				except:
+					self.DrawTopStar(380 + x * 330, 100 + y * 100 + self.AnimationValue(), "?", "?", "?")
+				i += 1
+
+		# Top Commiters
+		i = 0
+		for x in range(2):
+			for y in range(2):
+				try:
+					Commiter = self.TopCommits[i]['ID']
+					Sum = f"{self.TopCommits[i]['Sum']} 회"
+					self.DrawTopCommiter(380 + x * 330, 380 + y * 100 + self.AnimationValue(), Commiter, Sum)
+				except:
+					self.DrawTopCommiter(380 + x * 330, 380 + y * 100 + self.AnimationValue(), "?", "?")
 				i += 1
 				
 	# ==================================================================
