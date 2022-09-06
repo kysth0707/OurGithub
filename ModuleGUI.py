@@ -35,10 +35,16 @@ class OutGithubGUI:
 	TopStars = []
 	TopCommits = []
 
-	def RepoRefresh(self):
+	def ThreadMyRepo(self):
 		ModuleRequest.GetRepoDatas(self.MyID)
 		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
 		self.LastCommitDate = LastCommitRefresh()
+
+	def ThreadTopStars(self):
+		self.TopStars = ModuleRequest.GetTopStar()
+
+	def ThreadTopCommiters(self):
+		self.TopCommits = ModuleRequest.GetTopCommiters()
 
 	def __init__(self, ID) -> None:
 		self.MyID = ID
@@ -47,9 +53,11 @@ class OutGithubGUI:
 		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
 		self.LastCommitDate = LastCommitRefresh()
 
-		temp = Thread(target=self.RepoRefresh, daemon=True)
-		temp.daemon = True
-		temp.start()
+		functions = [self.ThreadMyRepo, self.ThreadTopStars, self.ThreadTopCommiters]
+		for i in range(len(functions)):
+			temp = Thread(target=functions[i], daemon=True)
+			temp.daemon = True
+			temp.start()
 
 		pygame.init()
 
@@ -58,9 +66,6 @@ class OutGithubGUI:
 		self.screen = pygame.display.set_mode((self.ScreenWidth, self.ScreenHeight), pygame.RESIZABLE)
 
 		self.ImageResize()
-
-		self.TopStars = ModuleRequest.GetTopStar()
-		self.TopCommits = ModuleRequest.GetTopCommiters()
 
 
 	# ==================================================
@@ -155,10 +160,20 @@ class OutGithubGUI:
 		self.DrawText(RepoOwner, (x + 20, y + 50), self.NormalGray, 12)
 		self.DrawText(str(StarCount), (x + 195, y + 15), self.LightGray, 12, IsBold=True, IsRightJustify=True)
 
-	def DrawTopCommiter(self, x, y, RepoName, RepoOwner):
+	def DrawTopCommiter(self, x, y, RepoName, RepoOwner, DayData):
 		self.screen.blit(self.ImageDict['TopCommit'], self.ConvertWidthPercent(x, y))
 		self.DrawText(RepoName, (x + 20, y + 15), self.LightGray, 16,  True)
 		self.DrawText(RepoOwner, (x + 20, y + 50), self.NormalGray, 12)
+		
+
+		if DayData != "?":
+			Days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+			for i in range(7):
+				val = self.ConvertWidthPercent(141 + x + i * 8, y + 16)
+				x2, y2 = val[0], val[1]
+				pygame.draw.rect(self.screen, (0, 255 - int(DayData[Days[i]]) * 20, 0) , [x2, y2, 7 * self.WidthPercent(), 47 * self.WidthPercent()])
+				# self.DrawText(DayData[Days[i]], (x2, y2), self.NormalGray, 12)
+			
 
 
 	def DrawRepositories(self):
@@ -181,10 +196,10 @@ class OutGithubGUI:
 			for y in range(2):
 				try:
 					Commiter = self.TopCommits[i]['ID']
-					Sum = f"{self.TopCommits[i]['Sum']} 회"
-					self.DrawTopCommiter(380 + x * 330, 380 + y * 100 + self.AnimationValue(), Commiter, Sum)
+					Sum = f"총 {self.TopCommits[i]['Sum']} 회"
+					self.DrawTopCommiter(380 + x * 330, 380 + y * 100 + self.AnimationValue(), Commiter, Sum, self.TopCommits[i])
 				except:
-					self.DrawTopCommiter(380 + x * 330, 380 + y * 100 + self.AnimationValue(), "?", "?")
+					self.DrawTopCommiter(380 + x * 330, 380 + y * 100 + self.AnimationValue(), "?", "?", "?")
 				i += 1
 				
 	# ==================================================================

@@ -41,4 +41,6 @@
 > (경) 아무것도 안함 (축)
 
 10일차
-> 스레드 연동
+> 스레드 연동 / TopCommiters 연동
+> DrawText 렉 줄이기 패치 해야됨
+![image](https://user-images.githubusercontent.com/83905675/188641945-d427084a-69c1-4609-ad0f-b9931439c1c8.png)
