@@ -19,5 +19,5 @@ GUI = ModuleGUI.OutGithubGUI("kysth0707")
 GUI.NoticeText = "공지 변경 테스트입니다."
 while True:
 	GUI.Update()
-	print(1 / MyTimer.Check())
+	print(f"{1 / MyTimer.Check()} fps")
 	MyTimer.Update()

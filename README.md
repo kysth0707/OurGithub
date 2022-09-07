@@ -44,3 +44,8 @@
 > 스레드 연동 / TopCommiters 연동
 > DrawText 렉 줄이기 패치 해야됨
 ![image](https://user-images.githubusercontent.com/83905675/188641945-d427084a-69c1-4609-ad0f-b9931439c1c8.png)
+
+11일차
+> 프레임 5fps -> 60fps 패치
+> DrawText 에 큰 무게가 실려있었던 것으로 추정
+![image](https://user-images.githubusercontent.com/83905675/188815477-45d1e617-a56c-4a7a-9ac1-8f69d97bec5d.png)

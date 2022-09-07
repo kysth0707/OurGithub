@@ -24,6 +24,7 @@ class OutGithubGUI:
 	NoticeText = f"[ 공지 ]   공지 테스트"
 
 	screen, ScreenHeight, ScreenWidth = None, None, None
+	clock = None
 	ImageName = ["Background", "FollowersAndFavoriteUsers", "MenuRepository", "NewRepositories", "RecentCommit", "TopCommit", "TopStar", "MyProfile", "PopUp"]
 	ImageResizeDict = {"MyProfile" : (75, 75)}
 	ImageDict = {}
@@ -34,6 +35,8 @@ class OutGithubGUI:
 
 	TopStars = []
 	TopCommits = []
+
+	TextImageDict = {}
 
 	def ThreadMyRepo(self):
 		ModuleRequest.GetRepoDatas(self.MyID)
@@ -60,6 +63,8 @@ class OutGithubGUI:
 			temp.start()
 
 		pygame.init()
+
+		self.clock = pygame.time.Clock()
 
 		self.ScreenWidth = 1000
 		self.ScreenHeight = 800
@@ -142,11 +147,14 @@ class OutGithubGUI:
 
 
 	def DrawText(self, text, xy, Color, FontSize, IsBold = False, IsRightJustify = False):
+		ImageDictFormat = f"{xy}"
+		if not ImageDictFormat in self.TextImageDict:
+			self.TextImageDict[ImageDictFormat] = pygame.font.SysFont("malgungothic", int(FontSize * self.WidthPercent()), IsBold).render(str(text), True, Color)
+
 		if IsRightJustify:
-			TextImage = pygame.font.SysFont("malgungothic", int(FontSize * self.WidthPercent()), IsBold).render(str(text), True, Color)
-			self.screen.blit(TextImage, self.ConvertWidthPercent(xy[0] - TextImage.get_size()[0], xy[1]))
+			self.screen.blit(self.TextImageDict[ImageDictFormat], self.ConvertWidthPercent(xy[0] - self.TextImageDict[ImageDictFormat].get_size()[0], xy[1]))
 		else:
-			self.screen.blit(pygame.font.SysFont("malgungothic", int(FontSize * self.WidthPercent()), IsBold).render(str(text), True, Color), self.ConvertWidthPercent(xy[0], xy[1]))
+			self.screen.blit(self.TextImageDict[ImageDictFormat], self.ConvertWidthPercent(xy[0], xy[1]))
 
 	def ShowMousePos(self):
 		MousePos = pygame.mouse.get_pos()
@@ -289,6 +297,8 @@ class OutGithubGUI:
 	# ==================================================================
 	
 	def Update(self):
+		self.clock.tick(60)
+		
 		if self.IsAnimation:
 			self.AniYValue = self.MathLerp(self.AniYValue, self.AniTargetValue, 0.1)
 			if time.time() - self.StartTime > 1:
