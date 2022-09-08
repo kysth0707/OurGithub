@@ -52,4 +52,5 @@
 
 12일차
 > 자동 이미지 리로드, 새 레포지토리 목록 추가
+> ( 브렌치 테스트 )
 ![image](https://user-images.githubusercontent.com/83905675/189066007-fc93c7a2-747e-479a-bc63-c6bef1ac3e16.png)
