@@ -1,3 +1,7 @@
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+# 출처: https://deep-deep-deep.tistory.com/34 [딥딥딥:티스토리]
+
 import pygame
 from PIL import Image
 import os
@@ -37,17 +41,32 @@ class OutGithubGUI:
 	TopCommits = []
 
 	TextImageDict = {}
+	NewRepositories = []
 
 	def ThreadMyRepo(self):
+		time.sleep(1)
+		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\Followers"))
+		for b in a:
+			os.remove(ReturnPos(f"\\imgs\\profiles\\Followers\\{b}"))
+		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\Favorite"))
+		for b in a:
+			os.remove(ReturnPos(f"\\imgs\\profiles\\Favorite\\{b}"))
+		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\RecentCommit"))
+		for b in a:
+			os.remove(ReturnPos(f"\\imgs\\profiles\\RecentCommit\\{b}"))		
 		ModuleRequest.GetRepoDatas(self.MyID)
 		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
 		self.LastCommitDate = LastCommitRefresh()
+		self.ImageResize()
 
 	def ThreadTopStars(self):
 		self.TopStars = ModuleRequest.GetTopStar()
 
 	def ThreadTopCommiters(self):
 		self.TopCommits = ModuleRequest.GetTopCommiters()
+
+	def ThreadNewRepositories(self):
+		self.NewRepositories = ModuleRequest.GetNewRepositories()
 
 	def __init__(self, ID) -> None:
 		self.MyID = ID
@@ -56,10 +75,9 @@ class OutGithubGUI:
 		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
 		self.LastCommitDate = LastCommitRefresh()
 
-		functions = [self.ThreadMyRepo, self.ThreadTopStars, self.ThreadTopCommiters]
+		functions = [self.ThreadMyRepo, self.ThreadTopStars, self.ThreadTopCommiters, self.ThreadNewRepositories]
 		for i in range(len(functions)):
 			temp = Thread(target=functions[i], daemon=True)
-			temp.daemon = True
 			temp.start()
 
 		pygame.init()
@@ -116,30 +134,30 @@ class OutGithubGUI:
 
 
 
-		ProfileDatas = os.listdir(ReturnPos(f"\\imgs\\profiles"))
+		ProfileDatas = os.listdir(ReturnPos(f"\\imgs\\profiles\\Followers"))
 		for DataName in ProfileDatas:
-			if DataName[:10] == "Followers-":
-				Name = DataName[10:][:-4]
-				a = Image.open(ReturnPos(f"\\imgs\\profiles\\Followers-{Name}.png"))
+			Name = DataName[:-4]
+			a = Image.open(ReturnPos(f"\\imgs\\profiles\\Followers\\{Name}.png"))
+			
+
+			SizeValue = self.HeightPercent()
+			b = a.resize((int(SizeValue * 40), int(SizeValue * 40)))
+
+			b.save(ReturnPos(f"\\imgs\\edited\\Followers\\{Name}.png"))
+			self.FollowersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Followers\\{Name}.png"))
+			self.FollowerKeys.append(Name)
+
+		ProfileDatas = os.listdir(ReturnPos(f"\\imgs\\profiles\\Favorite"))
+		for DataName in ProfileDatas:
+				Name = DataName[:-4]
+				a = Image.open(ReturnPos(f"\\imgs\\profiles\\Favorite\\{Name}.png"))
 				
 
 				SizeValue = self.HeightPercent()
 				b = a.resize((int(SizeValue * 40), int(SizeValue * 40)))
 
-				b.save(ReturnPos(f"\\imgs\\edited\\Followers-{Name}.png"))
-				self.FollowersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Followers-{Name}.png"))
-				self.FollowerKeys.append(Name)
-
-			elif DataName[:9] == "Favorite-":
-				Name = DataName[9:][:-4]
-				a = Image.open(ReturnPos(f"\\imgs\\profiles\\Favorite-{Name}.png"))
-				
-
-				SizeValue = self.HeightPercent()
-				b = a.resize((int(SizeValue * 40), int(SizeValue * 40)))
-
-				b.save(ReturnPos(f"\\imgs\\edited\\Favorite-{Name}.png"))
-				self.FavoriteUsersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Favorite-{Name}.png"))
+				b.save(ReturnPos(f"\\imgs\\edited\\Favorite\\{Name}.png"))
+				self.FavoriteUsersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Favorite\\{Name}.png"))
 				self.FavoriteUsersKeys.append(Name)
 
 
@@ -147,7 +165,7 @@ class OutGithubGUI:
 
 
 	def DrawText(self, text, xy, Color, FontSize, IsBold = False, IsRightJustify = False):
-		ImageDictFormat = f"{xy}"
+		ImageDictFormat = f"{xy}{text}"
 		if not ImageDictFormat in self.TextImageDict:
 			self.TextImageDict[ImageDictFormat] = pygame.font.SysFont("malgungothic", int(FontSize * self.WidthPercent()), IsBold).render(str(text), True, Color)
 
@@ -179,9 +197,14 @@ class OutGithubGUI:
 			for i in range(7):
 				val = self.ConvertWidthPercent(141 + x + i * 8, y + 16)
 				x2, y2 = val[0], val[1]
-				pygame.draw.rect(self.screen, (0, 255 - int(DayData[Days[i]]) * 20, 0) , [x2, y2, 7 * self.WidthPercent(), 47 * self.WidthPercent()])
+				pygame.draw.rect(self.screen, (40, 255 - int(DayData[Days[i]]) * 20, 40) , [x2, y2, 7 * self.WidthPercent(), 47 * self.WidthPercent()])
 				# self.DrawText(DayData[Days[i]], (x2, y2), self.NormalGray, 12)
-			
+
+	def DrawNewRepository(self, x, y, RepoName, ID, StarCount):
+		self.screen.blit(self.ImageDict['NewRepositories'], self.ConvertWidthPercent(x, y))
+		self.DrawText(RepoName, (x + 20, y + 13), self.LightGray, 16,  True)
+		self.DrawText(ID, (x + 20, y + 42), self.NormalGray, 12)
+		self.DrawText(str(StarCount), (x + 170, y + 12), self.NormalGray, 12, IsBold=True, IsRightJustify=True)
 
 
 	def DrawRepositories(self):
@@ -209,6 +232,13 @@ class OutGithubGUI:
 				except:
 					self.DrawTopCommiter(380 + x * 330, 380 + y * 100 + self.AnimationValue(), "?", "?", "?")
 				i += 1
+		
+		# New Repsoitories
+		for i in range(2):
+			try:
+				self.DrawNewRepository(750, 650 + i * 80, self.NewRepositories[i]['RepoName'], self.NewRepositories[i]['ID'], self.NewRepositories[i]['Star'])
+			except:
+				self.DrawNewRepository(750, 650 + i * 80, "?", "?", "?")
 				
 	# ==================================================================
 
@@ -233,7 +263,10 @@ class OutGithubGUI:
 		
 		# Followers
 		for i in range(3):
-			self.DrawMenuUser(14 + i * 90, 170 + self.AnimationValue(), self.FollowerKeys[i], self.FollowersDict[self.FollowerKeys[i]])
+			try:
+				self.DrawMenuUser(14 + i * 90, 170 + self.AnimationValue(), self.FollowerKeys[i], self.FollowersDict[self.FollowerKeys[i]])
+			except:
+				pass
 
 		# Repositories
 		for i in range(4):
@@ -244,7 +277,10 @@ class OutGithubGUI:
 
 		# Favorites
 		for i in range(3):
-			self.DrawMenuUser(14 + i * 90, 630 + self.AnimationValue(), self.FavoriteUsersKeys[i], self.FavoriteUsersDict[self.FavoriteUsersKeys[i]])
+			try:
+				self.DrawMenuUser(14 + i * 90, 630 + self.AnimationValue(), self.FavoriteUsersKeys[i], self.FavoriteUsersDict[self.FavoriteUsersKeys[i]])
+			except:
+				pass
 
 
 	# ==================================================================

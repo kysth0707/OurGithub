@@ -13,11 +13,11 @@ class Timer:
 		self.lasttime = time.time()
 
 
-MyTimer = Timer()
+# MyTimer = Timer()
 
 GUI = ModuleGUI.OutGithubGUI("kysth0707")
 GUI.NoticeText = "공지 변경 테스트입니다."
 while True:
 	GUI.Update()
-	print(f"{1 / MyTimer.Check()} fps")
-	MyTimer.Update()
+	# print(f"{1 / MyTimer.Check()} fps")
+	# MyTimer.Update()

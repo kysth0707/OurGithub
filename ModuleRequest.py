@@ -15,6 +15,9 @@ def GetTopStar():
 def GetTopCommiters():
 	return RequestGet(Domain("/topcommiters/"))
 
+def GetNewRepositories():
+	return RequestGet(Domain("/recentcommits/"))
+
 def GetRepoDatas(GithubUser):
 	GithubAPIToken = ""
 	with open("E:\\GithubProjects\\githubapitoken.txt", "r", encoding="utf-8") as f:
@@ -53,7 +56,7 @@ def GetRepoDatas(GithubUser):
 	FollowerData = RequestGet(f"https://api.github.com/users/{GithubUser}/followers")
 	for i in range(3):
 		try:
-			RequestImageGet(FollowerData[i]['avatar_url'], ReturnPos(f"\\imgs\\profiles\\Followers-{FollowerData[i]['login']}.png"))
+			RequestImageGet(FollowerData[i]['avatar_url'], ReturnPos(f"\\imgs\\profiles\\Followers\\{FollowerData[i]['login']}.png"))
 		except:
 			pass
 
@@ -65,7 +68,7 @@ def GetRepoDatas(GithubUser):
 
 		try:
 			UserData = RequestGet(f"https://api.github.com/users/{FavoriteUsers[i]}")
-			RequestImageGet(UserData['avatar_url'], ReturnPos(f"\\imgs\\profiles\\Favorite-{FavoriteUsers[i]}.png"))
+			RequestImageGet(UserData['avatar_url'], ReturnPos(f"\\imgs\\profiles\\Favorite\\{FavoriteUsers[i]}.png"))
 		except:
 			pass
 
@@ -73,7 +76,7 @@ def GetRepoDatas(GithubUser):
 
 	for i in range(3):
 		try:
-			RequestImageGet(FollowerData[i]['avatar_url'], ReturnPos(f"\\imgs\\profiles\\Followers-{FollowerData[i]['login']}.png"))
+			RequestImageGet(FollowerData[i]['avatar_url'], ReturnPos(f"\\imgs\\profiles\\Followers\\{FollowerData[i]['login']}.png"))
 		except:
 			pass
 

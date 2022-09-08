@@ -49,3 +49,7 @@
 > 프레임 5fps -> 60fps 패치
 > DrawText 에 큰 무게가 실려있었던 것으로 추정
 ![image](https://user-images.githubusercontent.com/83905675/188815477-45d1e617-a56c-4a7a-9ac1-8f69d97bec5d.png)
+
+12일차
+> 자동 이미지 리로드, 새 레포지토리 목록 추가
+![image](https://user-images.githubusercontent.com/83905675/189066007-fc93c7a2-747e-479a-bc63-c6bef1ac3e16.png)
