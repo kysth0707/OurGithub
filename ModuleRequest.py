@@ -9,6 +9,13 @@ domain = "http://localhost:8000"
 def Domain(txt):
 	return domain+txt
 
+def GetUserData(User):
+	GithubAPIToken = ""
+	with open("E:\\GithubProjects\\githubapitoken.txt", "r", encoding="utf-8") as f:
+		GithubAPIToken = f.readline()
+		SetTokenAPI(GithubAPIToken)
+	return RequestGet(f"https://api.github.com/users/{User}")
+
 def GetTopStar():
 	return RequestGet(Domain("/topstars/"))
 
@@ -16,6 +23,9 @@ def GetTopCommiters():
 	return RequestGet(Domain("/topcommiters/"))
 
 def GetNewRepositories():
+	return RequestGet(Domain("/newrepos/"))
+
+def GetRecentCommiters():
 	return RequestGet(Domain("/recentcommits/"))
 
 def GetRepoDatas(GithubUser):

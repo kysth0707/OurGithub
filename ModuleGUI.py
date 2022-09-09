@@ -1,4 +1,6 @@
 from PIL import ImageFile
+
+from ModuleRequestFunc import RequestImageGet
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 # 출처: https://deep-deep-deep.tistory.com/34 [딥딥딥:티스토리]
 
@@ -7,6 +9,7 @@ from PIL import Image
 import os
 import time
 from ModuleGUIFunc import LastCommitRefresh, MyRepoRefresh, ReturnLimitText, GetDatas
+from ModuleRequestFunc import RequestImageGet, RequestGet
 import ModuleRequest
 from threading import Thread
 
@@ -38,7 +41,9 @@ class OutGithubGUI:
 	FavoriteUsersKeys = []
 
 	TopStars = []
-	TopCommits = []
+	TopCommiters = []
+	RecentCommiters = []
+	RecentCommiterImgs = []
 
 	TextImageDict = {}
 	NewRepositories = []
@@ -51,9 +56,6 @@ class OutGithubGUI:
 		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\Favorite"))
 		for b in a:
 			os.remove(ReturnPos(f"\\imgs\\profiles\\Favorite\\{b}"))
-		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\RecentCommit"))
-		for b in a:
-			os.remove(ReturnPos(f"\\imgs\\profiles\\RecentCommit\\{b}"))		
 		ModuleRequest.GetRepoDatas(self.MyID)
 		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
 		self.LastCommitDate = LastCommitRefresh()
@@ -63,10 +65,21 @@ class OutGithubGUI:
 		self.TopStars = ModuleRequest.GetTopStar()
 
 	def ThreadTopCommiters(self):
-		self.TopCommits = ModuleRequest.GetTopCommiters()
+		self.TopCommiters = ModuleRequest.GetTopCommiters()
 
 	def ThreadNewRepositories(self):
 		self.NewRepositories = ModuleRequest.GetNewRepositories()
+
+	def ThreadRecentCommiters(self):
+		time.sleep(1)
+		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\RecentCommit"))
+		for b in a:
+			os.remove(ReturnPos(f"\\imgs\\profiles\\RecentCommit\\{b}"))
+		
+		self.RecentCommiters = ModuleRequest.GetRecentCommiters()
+		for i in range(len(self.RecentCommiters)):
+			User = self.RecentCommiters[i]['ID']
+			ModuleRequest.RequestImageGet(ModuleRequest.GetUserData(User)['avatar_url'], ReturnPos(f"\\imgs\\profiles\\RecentCommit\\{i}.png"))
 
 	def __init__(self, ID) -> None:
 		self.MyID = ID
@@ -75,7 +88,7 @@ class OutGithubGUI:
 		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
 		self.LastCommitDate = LastCommitRefresh()
 
-		functions = [self.ThreadMyRepo, self.ThreadTopStars, self.ThreadTopCommiters, self.ThreadNewRepositories]
+		functions = [self.ThreadMyRepo, self.ThreadTopStars, self.ThreadTopCommiters, self.ThreadNewRepositories, self.ThreadRecentCommiters]
 		for i in range(len(functions)):
 			temp = Thread(target=functions[i], daemon=True)
 			temp.start()
@@ -100,7 +113,7 @@ class OutGithubGUI:
 	#  =============================================
 
 
-	def HeightPercent(self):
+	def WidthPercent(self):
 		return self.ScreenHeight / 800
 
 	def WidthPercent(self):
@@ -123,7 +136,7 @@ class OutGithubGUI:
 			except:
 				a = Image.open(ReturnPos(f"\\imgs\\profiles\\{ImgName}.png"))
 
-			SizeValue = (self.HeightPercent())
+			SizeValue = (self.WidthPercent())
 			if ImgName in self.ImageResizeDict:
 				b = a.resize((int(SizeValue * self.ImageResizeDict[ImgName][0]), int(SizeValue * self.ImageResizeDict[ImgName][1])))
 			else:
@@ -140,7 +153,7 @@ class OutGithubGUI:
 			a = Image.open(ReturnPos(f"\\imgs\\profiles\\Followers\\{Name}.png"))
 			
 
-			SizeValue = self.HeightPercent()
+			SizeValue = self.WidthPercent()
 			b = a.resize((int(SizeValue * 40), int(SizeValue * 40)))
 
 			b.save(ReturnPos(f"\\imgs\\edited\\Followers\\{Name}.png"))
@@ -153,21 +166,34 @@ class OutGithubGUI:
 				a = Image.open(ReturnPos(f"\\imgs\\profiles\\Favorite\\{Name}.png"))
 				
 
-				SizeValue = self.HeightPercent()
+				SizeValue = self.WidthPercent()
 				b = a.resize((int(SizeValue * 40), int(SizeValue * 40)))
 
 				b.save(ReturnPos(f"\\imgs\\edited\\Favorite\\{Name}.png"))
 				self.FavoriteUsersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Favorite\\{Name}.png"))
 				self.FavoriteUsersKeys.append(Name)
 
+		ProfileDatas = os.listdir(ReturnPos(f"\\imgs\\profiles\\RecentCommit"))
+		for DataName in ProfileDatas:
+				Name = DataName[:-4]
+				a = Image.open(ReturnPos(f"\\imgs\\profiles\\RecentCommit\\{Name}.png"))
+				
+
+				SizeValue = self.WidthPercent()
+				b = a.resize((int(SizeValue * 40), int(SizeValue * 40)))
+
+				b.save(ReturnPos(f"\\imgs\\edited\\RecentCommit\\{Name}.png"))
+				self.RecentCommiterImgs.append(pygame.image.load(ReturnPos(f"\\imgs\\edited\\RecentCommit\\{Name}.png")))
+
 
 	# ==================================================================
 
 
 	def DrawText(self, text, xy, Color, FontSize, IsBold = False, IsRightJustify = False):
-		ImageDictFormat = f"{xy}{text}"
+		ImageDictFormat = f"{xy}{text}{self.WidthPercent()}"
 		if not ImageDictFormat in self.TextImageDict:
 			self.TextImageDict[ImageDictFormat] = pygame.font.SysFont("malgungothic", int(FontSize * self.WidthPercent()), IsBold).render(str(text), True, Color)
+		# 없으면 새로 렌더하고 있으면 그대로 쓰기
 
 		if IsRightJustify:
 			self.screen.blit(self.TextImageDict[ImageDictFormat], self.ConvertWidthPercent(xy[0] - self.TextImageDict[ImageDictFormat].get_size()[0], xy[1]))
@@ -206,6 +232,20 @@ class OutGithubGUI:
 		self.DrawText(ID, (x + 20, y + 42), self.NormalGray, 12)
 		self.DrawText(str(StarCount), (x + 170, y + 12), self.NormalGray, 12, IsBold=True, IsRightJustify=True)
 
+	def DrawRecentCommit(self, x, y, ID, RepoName, Date, i = None):
+		ID = ReturnLimitText(ID, 7)
+		RepoName = ReturnLimitText(RepoName, 5)
+		Date = Date[2:10].replace('-','.')
+		
+		self.screen.blit(self.ImageDict['RecentCommit'], self.ConvertWidthPercent(x, y))
+		self.DrawText(Date, (x + 7, y + 63), self.NormalGray, 13)
+		self.DrawText(RepoName, (x + 10, y + 87), self.NormalGray, 13)
+		self.DrawText(ID, (x + 10, y + 123), self.NormalGray, 13)
+
+		if i == None:
+			return
+		self.screen.blit(self.RecentCommiterImgs[i], self.ConvertWidthPercent(x + 10, y + 10))
+		
 
 	def DrawRepositories(self):
 		# Top Stars
@@ -226,12 +266,19 @@ class OutGithubGUI:
 		for x in range(2):
 			for y in range(2):
 				try:
-					Commiter = self.TopCommits[i]['ID']
-					Sum = f"총 {self.TopCommits[i]['Sum']} 회"
-					self.DrawTopCommiter(380 + x * 330, 380 + y * 100 + self.AnimationValue(), Commiter, Sum, self.TopCommits[i])
+					Commiter = self.TopCommiters[i]['ID']
+					Sum = f"총 {self.TopCommiters[i]['Sum']} 회"
+					self.DrawTopCommiter(380 + x * 330, 380 + y * 100 + self.AnimationValue(), Commiter, Sum, self.TopCommiters[i])
 				except:
 					self.DrawTopCommiter(380 + x * 330, 380 + y * 100 + self.AnimationValue(), "?", "?", "?")
 				i += 1
+
+		# Recent Commits
+		for i in range(4):
+			try:
+				self.DrawRecentCommit(322 + i * 75, 643 + self.AnimationValue(), self.RecentCommiters[i]['ID'], self.RecentCommiters[i]['RepoName'], self.RecentCommiters[i]['LastCommit'], i)
+			except:
+				self.DrawRecentCommit(322 + i * 75, 643 + self.AnimationValue(), "?", "?", "?")
 		
 		# New Repsoitories
 		for i in range(2):
@@ -349,6 +396,7 @@ class OutGithubGUI:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				Run = False
+				raise
 				pygame.quit()
 
 			elif event.type == pygame.VIDEORESIZE:
