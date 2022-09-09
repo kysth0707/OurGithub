@@ -48,27 +48,45 @@ class OutGithubGUI:
 	TextImageDict = {}
 	NewRepositories = []
 
+	ThreadCount = 0
+
 	def ThreadMyRepo(self):
-		time.sleep(1)
-		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\Followers"))
-		for b in a:
-			os.remove(ReturnPos(f"\\imgs\\profiles\\Followers\\{b}"))
-		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\Favorite"))
-		for b in a:
-			os.remove(ReturnPos(f"\\imgs\\profiles\\Favorite\\{b}"))
 		ModuleRequest.GetRepoDatas(self.MyID)
 		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
 		self.LastCommitDate = LastCommitRefresh()
-		self.ImageResize()
+		self.ThreadCount += 1
+
+		while True:
+			if self.ThreadCount >= 7:
+				self.ImageResize()
+				break
+			time.sleep(1)
+
+	def ThreadFavoriteUsers(self):
+		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\Favorite"))
+		for b in a:
+			os.remove(ReturnPos(f"\\imgs\\profiles\\Favorite\\{b}"))
+		ModuleRequest.ThreadFavoriteUsers()
+		self.ThreadCount += 1
+
+	def ThreadFollowers(self):
+		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\Followers"))
+		for b in a:
+			os.remove(ReturnPos(f"\\imgs\\profiles\\Followers\\{b}"))
+		ModuleRequest.ThreadFollowers(self.MyID)
+		self.ThreadCount += 1
 
 	def ThreadTopStars(self):
 		self.TopStars = ModuleRequest.GetTopStar()
+		self.ThreadCount += 1
 
 	def ThreadTopCommiters(self):
 		self.TopCommiters = ModuleRequest.GetTopCommiters()
+		self.ThreadCount += 1
 
 	def ThreadNewRepositories(self):
 		self.NewRepositories = ModuleRequest.GetNewRepositories()
+		self.ThreadCount += 1
 
 	def ThreadRecentCommiters(self):
 		time.sleep(1)
@@ -80,6 +98,7 @@ class OutGithubGUI:
 		for i in range(len(self.RecentCommiters)):
 			User = self.RecentCommiters[i]['ID']
 			ModuleRequest.RequestImageGet(ModuleRequest.GetUserData(User)['avatar_url'], ReturnPos(f"\\imgs\\profiles\\RecentCommit\\{i}.png"))
+		self.ThreadCount += 1
 
 	def __init__(self, ID) -> None:
 		self.MyID = ID
@@ -87,11 +106,6 @@ class OutGithubGUI:
 		# 나중에 .txt 말고 변수로 저장하게 변경시키기
 		self.MyRepoStar, self.MyRepoName, self.MyRepoTime = MyRepoRefresh()
 		self.LastCommitDate = LastCommitRefresh()
-
-		functions = [self.ThreadMyRepo, self.ThreadTopStars, self.ThreadTopCommiters, self.ThreadNewRepositories, self.ThreadRecentCommiters]
-		for i in range(len(functions)):
-			temp = Thread(target=functions[i], daemon=True)
-			temp.start()
 
 		pygame.init()
 
@@ -102,6 +116,10 @@ class OutGithubGUI:
 		self.screen = pygame.display.set_mode((self.ScreenWidth, self.ScreenHeight), pygame.RESIZABLE)
 
 		self.ImageResize()
+		functions = [self.ThreadMyRepo, self.ThreadTopStars, self.ThreadTopCommiters, self.ThreadNewRepositories, self.ThreadRecentCommiters, self.ThreadFavoriteUsers, self.ThreadFollowers]
+		for i in range(len(functions)):
+			temp = Thread(target=functions[i], daemon=True)
+			temp.start()
 
 
 	# ==================================================
@@ -113,7 +131,7 @@ class OutGithubGUI:
 	#  =============================================
 
 
-	def WidthPercent(self):
+	def HeightPercent(self):
 		return self.ScreenHeight / 800
 
 	def WidthPercent(self):
@@ -146,36 +164,41 @@ class OutGithubGUI:
 			self.ImageDict[ImgName] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\{ImgName}.png"))
 
 
-
-		ProfileDatas = os.listdir(ReturnPos(f"\\imgs\\profiles\\Followers"))
-		for DataName in ProfileDatas:
-			Name = DataName[:-4]
-			a = Image.open(ReturnPos(f"\\imgs\\profiles\\Followers\\{Name}.png"))
-			
-
-			SizeValue = self.WidthPercent()
-			b = a.resize((int(SizeValue * 40), int(SizeValue * 40)))
-
-			b.save(ReturnPos(f"\\imgs\\edited\\Followers\\{Name}.png"))
-			self.FollowersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Followers\\{Name}.png"))
-			self.FollowerKeys.append(Name)
-
-		ProfileDatas = os.listdir(ReturnPos(f"\\imgs\\profiles\\Favorite"))
-		for DataName in ProfileDatas:
+		try:
+			ProfileDatas = os.listdir(ReturnPos(f"\\imgs\\profiles\\Followers"))
+			for DataName in ProfileDatas:
 				Name = DataName[:-4]
-				a = Image.open(ReturnPos(f"\\imgs\\profiles\\Favorite\\{Name}.png"))
+				a = Image.open(ReturnPos(f"\\imgs\\profiles\\Followers\\{Name}.png"))
 				
 
 				SizeValue = self.WidthPercent()
 				b = a.resize((int(SizeValue * 40), int(SizeValue * 40)))
 
-				b.save(ReturnPos(f"\\imgs\\edited\\Favorite\\{Name}.png"))
-				self.FavoriteUsersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Favorite\\{Name}.png"))
-				self.FavoriteUsersKeys.append(Name)
+				b.save(ReturnPos(f"\\imgs\\edited\\Followers\\{Name}.png"))
+				self.FollowersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Followers\\{Name}.png"))
+				self.FollowerKeys.append(Name)
+		except:
+			pass
 
-		ProfileDatas = os.listdir(ReturnPos(f"\\imgs\\profiles\\RecentCommit"))
-		for DataName in ProfileDatas:
-				Name = DataName[:-4]
+		try:
+			ProfileDatas = os.listdir(ReturnPos(f"\\imgs\\profiles\\Favorite"))
+			for DataName in ProfileDatas:
+					Name = DataName[:-4]
+					a = Image.open(ReturnPos(f"\\imgs\\profiles\\Favorite\\{Name}.png"))
+					
+
+					SizeValue = self.WidthPercent()
+					b = a.resize((int(SizeValue * 40), int(SizeValue * 40)))
+
+					b.save(ReturnPos(f"\\imgs\\edited\\Favorite\\{Name}.png"))
+					self.FavoriteUsersDict[Name] = pygame.image.load(ReturnPos(f"\\imgs\\edited\\Favorite\\{Name}.png"))
+					self.FavoriteUsersKeys.append(Name)
+		except:
+			pass
+
+		try:
+			self.RecentCommiterImgs = []
+			for Name in range(4):
 				a = Image.open(ReturnPos(f"\\imgs\\profiles\\RecentCommit\\{Name}.png"))
 				
 
@@ -184,6 +207,8 @@ class OutGithubGUI:
 
 				b.save(ReturnPos(f"\\imgs\\edited\\RecentCommit\\{Name}.png"))
 				self.RecentCommiterImgs.append(pygame.image.load(ReturnPos(f"\\imgs\\edited\\RecentCommit\\{Name}.png")))
+		except:
+			pass
 
 
 	# ==================================================================

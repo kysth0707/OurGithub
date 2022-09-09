@@ -28,11 +28,14 @@ def GetNewRepositories():
 def GetRecentCommiters():
 	return RequestGet(Domain("/recentcommits/"))
 
-def GetRepoDatas(GithubUser):
+def SetToken():
 	GithubAPIToken = ""
 	with open("E:\\GithubProjects\\githubapitoken.txt", "r", encoding="utf-8") as f:
 		GithubAPIToken = f.readline()
 		SetTokenAPI(GithubAPIToken)
+
+def GetRepoDatas(GithubUser):
+	SetToken()
 	ReturnDatas = []
 	GithubRepos = RequestGet(f"https://api.github.com/users/{GithubUser}/repos")
 
@@ -55,7 +58,10 @@ def GetRepoDatas(GithubUser):
 			ReturnDatas.append({'ID' : GithubUser, 'RepoName' : RepoName, 'Star' : StarCount, 'LastCommit' : LastCommit, 'CreatedAt' : CreatedAt})
 
 	f.close()
+	return ReturnDatas
 
+def ThreadFollowers(GithubUser):
+	SetToken()
 	print("\n")
 	UserData = RequestGet(f"https://api.github.com/users/{GithubUser}")
 	print(f"ID : {UserData['login']}")
@@ -70,6 +76,15 @@ def GetRepoDatas(GithubUser):
 		except:
 			pass
 
+	for i in range(3):
+		try:
+			RequestImageGet(FollowerData[i]['avatar_url'], ReturnPos(f"\\imgs\\profiles\\Followers\\{FollowerData[i]['login']}.png"))
+		except:
+			pass
+
+
+def ThreadFavoriteUsers():
+	SetToken()
 	FavoriteUsers = ['Spottedleaf', 'AlphaKR93', 'kysth0707']
 	# f = open(ReturnPos(f"\\Datas\\FavoriteUsers.txt"), "w", encoding="utf-8")
 
@@ -84,12 +99,5 @@ def GetRepoDatas(GithubUser):
 
 	# f.close()
 
-	for i in range(3):
-		try:
-			RequestImageGet(FollowerData[i]['avatar_url'], ReturnPos(f"\\imgs\\profiles\\Followers\\{FollowerData[i]['login']}.png"))
-		except:
-			pass
-
-	return ReturnDatas
 	# avatar_url
 	# followers_url

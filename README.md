@@ -58,3 +58,5 @@
 13일차
 > RecentCommit 추가
 > 버그 발견, 이미지 크기 조정 안됨
+> 해결
+[image](https://user-images.githubusercontent.com/83905675/189359237-ea9aeaa6-bb0e-4e5c-95f5-b092dc0cf094.png)
