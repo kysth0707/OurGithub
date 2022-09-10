@@ -10,7 +10,6 @@ def ReturnPos(loc : str):
 
 lock = threading.Lock()
 
-# f = open(ReturnPos("\\pw.txt"), "r", encoding="utf-8")
 f = open(ReturnPos("\\pw.txt"), "r", encoding="utf-8")
 pw = f.readline()
 f.close()

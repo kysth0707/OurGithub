@@ -4,7 +4,7 @@ import os
 def ReturnPos(loc : str):
 	return os.getcwd() + loc
 
-domain = "http://nojam.easylab.kr:1234"
+domain = "http://localhost:8000"
 
 def Domain(txt):
 	return domain+txt

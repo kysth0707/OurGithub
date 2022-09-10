@@ -60,3 +60,6 @@
 > 버그 발견, 이미지 크기 조정 안됨
 > 해결
 [image](https://user-images.githubusercontent.com/83905675/189359237-ea9aeaa6-bb0e-4e5c-95f5-b092dc0cf094.png)
+
+14일차
+> 서버 연결 완료 ssh 명령어 사용하기
