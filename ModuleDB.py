@@ -10,15 +10,12 @@ def ReturnPos(loc : str):
 
 lock = threading.Lock()
 
-# f = open(ReturnPos("\\pw.txt"), "r", encoding="utf-8")
-f = open(ReturnPos("\\pw.txt"), "r", encoding="utf-8")
-pw = f.readline()
-f.close()
+pw=""
 
 MyDB = pymysql.connect(
 	user='root', 
 	passwd=pw,
-	host='nojam.easylab.kr', 
+	host='192.168.1.238', 
 	port=3999,
 	db='ourgithub', 
 	charset='utf8'
@@ -97,6 +94,15 @@ def AddUser(ID):
 	UpdateRepos(ID)
 	return True
 
+def RemoveUser(ID):
+	try:
+		Command(f"DELETE FROM users WHERE ID = '{ID}';")
+		Command(f"DELETE FROM repos WHERE ID = '{ID}';")
+		Command(f"DELETE FROM contris WHERE ID = '{ID}';")
+		return True
+	except:
+		return False
+
 def UpdateContributions(ID):
 	Value = ModuleContributions.Get(ID)
 	# print(Value)
@@ -151,6 +157,24 @@ def GetRecentCommits():
 def GetNewRepos():	
 	NewRepos = GetData("SELECT * FROM repos ORDER BY CreateDate DESC LIMIT 4;")
 	return NewRepos
+
+def Refresh():
+	UserData = []
+	with open('users.txt') as f:
+		UserData = f.readlines()
+		for i in range(len(UserData)):
+			if UserData[i][len(UserData[i]) - 1] == "\n":
+				UserData[i] = UserData[i][:-1]
+	# print(UserData)
+	for i in range(len(UserData)):
+		if AddUser(UserData[i]) == True:
+			UpdateContributions(UserData[i])
+			GetContributions(UserData[i])
+			GetRepoDatas(UserData[i])
+		else:
+			RemoveUser(UserData[i])
+
+	return True
 
 # AddUser("kysth0707")
 # UpdateContributions("kysth0707")

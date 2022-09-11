@@ -1,3 +1,4 @@
+from turtle import title
 from PIL import ImageFile
 
 from ModuleRequestFunc import RequestImageGet
@@ -49,6 +50,7 @@ class OutGithubGUI:
 	NewRepositories = []
 
 	ThreadCount = 0
+	Clicked = False
 
 	def ThreadMyRepo(self):
 		ModuleRequest.GetRepoDatas(self.MyID)
@@ -145,6 +147,28 @@ class OutGithubGUI:
 
 	# ==================================================================
 
+	def CheckClick(self, x1y1, x2y2):
+		if not self.Clicked:
+			return
+
+		MousePos = pygame.mouse.get_pos()
+		x1, y1 = self.ConvertWidthPercent(x1y1[0], x1y1[1])
+		x2, y2 = self.ConvertWidthPercent(x2y2[0], x2y2[1])
+
+		if x1 > x2:
+			x1, x2 = x2, x1
+		if y1 > y2:
+			y1, y2 = y2, y1
+
+		if x1 < MousePos[0] and MousePos[0] < x2:
+			if y1 < MousePos[1] and MousePos[1] < y2:
+				self.Clicked = False
+				return True
+		
+		return False
+
+	# ==================================================================
+
 	def ImageResize(self):
 		self.RefreshCurrentSize()
 
@@ -231,11 +255,17 @@ class OutGithubGUI:
 
 	# ==================================================================
 
-	def DrawTopStar(self, x, y, RepoName, RepoOwner, StarCount):
+	def DrawTopStar(self, x, y, RepoName, RepoOwner, StarCount, LastCommit, CreateDate):
 		self.screen.blit(self.ImageDict['TopStar'], self.ConvertWidthPercent(x, y))
 		self.DrawText(RepoName, (x + 20, y + 15), self.LightGray, 16,  True)
 		self.DrawText(RepoOwner, (x + 20, y + 50), self.NormalGray, 12)
 		self.DrawText(str(StarCount), (x + 195, y + 15), self.LightGray, 12, IsBold=True, IsRightJustify=True)
+
+		if self.CheckClick((x, y), (x + 224, y + 75)):
+			if self.IsPopUp == False:
+				self.PopUp(f"[ TopStar ] {RepoName} by {RepoOwner}", 
+						   f"저장소 명 : {RepoName}\n\n\n저장소 소유자 : {RepoOwner}\n\n\n저장소 별 개수 : {StarCount}\n\n\n<link>https://github.com/{RepoOwner}/{RepoName}</link>\n\n생성 일자 : {CreateDate}\n\n최종 커밋 : {LastCommit}")
+			# print(f"TopStar Clicked {RepoName}")
 
 	def DrawTopCommiter(self, x, y, RepoName, RepoOwner, DayData):
 		self.screen.blit(self.ImageDict['TopCommit'], self.ConvertWidthPercent(x, y))
@@ -243,22 +273,42 @@ class OutGithubGUI:
 		self.DrawText(RepoOwner, (x + 20, y + 50), self.NormalGray, 12)
 		
 
+		CloseDayData = ""
 		if DayData != "?":
 			Days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 			for i in range(7):
 				val = self.ConvertWidthPercent(141 + x + i * 8, y + 16)
 				x2, y2 = val[0], val[1]
-				pygame.draw.rect(self.screen, (40, 255 - int(DayData[Days[i]]) * 20, 40) , [x2, y2, 7 * self.WidthPercent(), 47 * self.WidthPercent()])
+				try:
+					pygame.draw.rect(self.screen, (40, 255 - int(DayData[Days[i]]) * 20, 40) , [x2, y2, 7 * self.WidthPercent(), 47 * self.WidthPercent()])
+				except:
+					pygame.draw.rect(self.screen, (40, 0, 40) , [x2, y2, 7 * self.WidthPercent(), 47 * self.WidthPercent()])
 				# self.DrawText(DayData[Days[i]], (x2, y2), self.NormalGray, 12)
+				CloseDayData += f"{Days[i]} : {DayData[Days[i]]}회\n"
+		
+		if self.CheckClick((x, y), (x + 207, y + 78)):
+			if self.IsPopUp == False:
+				self.PopUp(f"[ TopCommiter ] {RepoName} / {RepoOwner}", 
+						   f"대상 사용자 : {RepoName}\n\n\n이번 주 기여도: {RepoOwner}\n\n\n자세한 기여도\n\n{CloseDayData}\n\n\n<link>https://github.com/{RepoName}</link>")
 
-	def DrawNewRepository(self, x, y, RepoName, ID, StarCount):
+	def DrawNewRepository(self, x, y, RepoName, ID, StarCount, CreateDate, LastCommit):
 		self.screen.blit(self.ImageDict['NewRepositories'], self.ConvertWidthPercent(x, y))
 		self.DrawText(RepoName, (x + 20, y + 13), self.LightGray, 16,  True)
 		self.DrawText(ID, (x + 20, y + 42), self.NormalGray, 12)
 		self.DrawText(str(StarCount), (x + 170, y + 12), self.NormalGray, 12, IsBold=True, IsRightJustify=True)
 
-	def DrawRecentCommit(self, x, y, ID, RepoName, Date, i = None):
-		ID = ReturnLimitText(ID, 7)
+		if self.CheckClick((x, y), (x + 195, y + 64)):
+			if self.IsPopUp == False:
+				self.PopUp(f"[ NewRepository ] {RepoName} / {ID}", 
+						   f"저장소 명 : {RepoName}\n\n\n저장소 소유자 : {ID}\n\n\n저장소 별 개수 : {StarCount}\n\n\n<link>https://github.com/{ID}/{RepoName}</link>\n\n생성 일자 : {CreateDate}\n\n최종 커밋 : {LastCommit}")
+
+	def DrawRecentCommit(self, x, y, ID, RepoName, Date, StarCount, CreateDate, i = None):
+		if self.CheckClick((x, y), (x + 62, y + 154)):
+			if self.IsPopUp == False:
+				self.PopUp(f"[ RecentCommit ] {RepoName} / {ID}", 
+						   f"저장소 명 : {RepoName}\n\n\n저장소 소유자 : {ID}\n\n\n저장소 별 개수 : {StarCount}\n\n\n<link>https://github.com/{ID}/{RepoName}</link>\n\n생성 일자 : {CreateDate}\n\n최종 커밋 : {Date}")
+
+		ID = ReturnLimitText(ID, 6)
 		RepoName = ReturnLimitText(RepoName, 5)
 		Date = Date[2:10].replace('-','.')
 		
@@ -281,9 +331,11 @@ class OutGithubGUI:
 					RepoName = self.TopStars[i]['RepoName']
 					RepoOwner = self.TopStars[i]['ID']
 					Star = self.TopStars[i]['Star']
-					self.DrawTopStar(380 + x * 330, 100 + y * 100 + self.AnimationValue(), RepoName, RepoOwner, Star)
+					LastCommit = self.TopStars[i]['LastCommit']
+					CreateDate = self.TopStars[i]['CreateDate']
+					self.DrawTopStar(380 + x * 330, 100 + y * 100 + self.AnimationValue(), RepoName, RepoOwner, Star, LastCommit, CreateDate)
 				except:
-					self.DrawTopStar(380 + x * 330, 100 + y * 100 + self.AnimationValue(), "?", "?", "?")
+					self.DrawTopStar(380 + x * 330, 100 + y * 100 + self.AnimationValue(), "?", "?", "?", "?", "?")
 				i += 1
 
 		# Top Commiters
@@ -301,16 +353,16 @@ class OutGithubGUI:
 		# Recent Commits
 		for i in range(4):
 			try:
-				self.DrawRecentCommit(322 + i * 75, 643 + self.AnimationValue(), self.RecentCommiters[i]['ID'], self.RecentCommiters[i]['RepoName'], self.RecentCommiters[i]['LastCommit'], i)
+				self.DrawRecentCommit(322 + i * 75, 643 + self.AnimationValue(), self.RecentCommiters[i]['ID'], self.RecentCommiters[i]['RepoName'], self.RecentCommiters[i]['LastCommit'], self.RecentCommiters[i]['Star'], self.RecentCommiters[i]['CreateDate'], i)
 			except:
-				self.DrawRecentCommit(322 + i * 75, 643 + self.AnimationValue(), "?", "?", "?")
+				self.DrawRecentCommit(322 + i * 75, 643 + self.AnimationValue(), "?", "?", "?", "?", "?")
 		
 		# New Repsoitories
 		for i in range(2):
 			try:
-				self.DrawNewRepository(750, 650 + i * 80, self.NewRepositories[i]['RepoName'], self.NewRepositories[i]['ID'], self.NewRepositories[i]['Star'])
+				self.DrawNewRepository(750, 650 + i * 80, self.NewRepositories[i]['RepoName'], self.NewRepositories[i]['ID'], self.NewRepositories[i]['Star'], self.NewRepositories[i]['CreateDate'], self.NewRepositories[i]['LastCommit'])
 			except:
-				self.DrawNewRepository(750, 650 + i * 80, "?", "?", "?")
+				self.DrawNewRepository(750, 650 + i * 80, "?", "?", "?", "?", "?")
 				
 	# ==================================================================
 
@@ -377,14 +429,23 @@ class OutGithubGUI:
 	# ==================================================================
 
 	IsPopUp = False
+	PopUpTitle = ""
+	PopUpSubtitle = ""
 
 	def PopUp(self, Title, Subtitle):
 		self.IsPopUp = True
+		self.PopUpTitle = Title
+		self.PopUpSubtitle = Subtitle
 		pass
 
 	def DrawPopUp(self):
 		if self.IsPopUp:
 			self.screen.blit(self.ImageDict['PopUp'], (0, 0))
+			self.DrawText(self.PopUpTitle, (68, 68), self.White, 22)
+			Subtitles = self.PopUpSubtitle.split('\n')
+			
+			for i in range(len(Subtitles)):
+				self.DrawText(Subtitles[i], (68, 140 + i * 20), self.Black, 17)
 
 	# ==================================================================
 
@@ -412,17 +473,21 @@ class OutGithubGUI:
 			if time.time() - self.StartTime > 1:
 				self.IsAnimation = False
 
+
 		self.DrawScreen()
 
 		self.ShowMousePos()
 
 		pygame.display.update()
 
+		if self.Clicked:
+			self.Clicked = False
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				Run = False
-				raise
 				pygame.quit()
+				raise
 
 			elif event.type == pygame.VIDEORESIZE:
 				LastScreen = (self.ScreenWidth, self.ScreenHeight)
@@ -441,4 +506,8 @@ class OutGithubGUI:
 					if self.IsPopUp:
 						self.IsPopUp = False
 					else:
-						self.PopUp("ㅎㅇ", "ㅎㅇ")
+						self.PopUp("ㅎㅇ", "1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\nasdf")
+
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					self.Clicked = True

@@ -10,10 +10,7 @@ def Domain(txt):
 	return domain+txt
 
 def GetUserData(User):
-	GithubAPIToken = ""
-	with open("E:\\GithubProjects\\githubapitoken.txt", "r", encoding="utf-8") as f:
-		GithubAPIToken = f.readline()
-		SetTokenAPI(GithubAPIToken)
+	SetToken()
 	return RequestGet(f"https://api.github.com/users/{User}")
 
 def GetTopStar():
@@ -30,7 +27,7 @@ def GetRecentCommiters():
 
 def SetToken():
 	GithubAPIToken = ""
-	with open("E:\\GithubProjects\\githubapitoken.txt", "r", encoding="utf-8") as f:
+	with open("githubapitoken.txt") as f:
 		GithubAPIToken = f.readline()
 		SetTokenAPI(GithubAPIToken)
 

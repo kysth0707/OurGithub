@@ -63,3 +63,13 @@
 
 14일차
 > 서버 연결 완료 ssh 명령어 사용하기
+
+15일차
+> PopUp 중간 정도 완료
+> 링크 이동 필요
+![image](https://user-images.githubusercontent.com/83905675/189515816-266d4edf-1822-44e9-b05b-a968e518dd78.png)
+![image](https://user-images.githubusercontent.com/83905675/189515817-6ddf1db4-cccd-4a40-9b27-d8bb2274bf89.png)
+![image](https://user-images.githubusercontent.com/83905675/189515818-ef8f225a-adc8-4c85-b1b8-7b81c0b66fc2.png)
+![image](https://user-images.githubusercontent.com/83905675/189515821-3a95be31-ddfe-4dfd-91b8-559964d49e1c.png)
+
+
