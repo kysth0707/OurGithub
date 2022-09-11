@@ -158,21 +158,37 @@ def GetNewRepos():
 	NewRepos = GetData("SELECT * FROM repos ORDER BY CreateDate DESC LIMIT 4;")
 	return NewRepos
 
+def GetNotice():
+	Notice = GetData("SELECT * FROM notice;")
+	return Notice[0]
+
 def Refresh():
+	with open("notice.txt") as f:
+		Notice = f.readlines()[0]
+		Command("TRUNCATE notice;")
+		Command(f"INSERT INTO notice VALUES ({Notice})")
+
 	UserData = []
 	with open('users.txt') as f:
 		UserData = f.readlines()
 		for i in range(len(UserData)):
 			if UserData[i][len(UserData[i]) - 1] == "\n":
 				UserData[i] = UserData[i][:-1]
+	
+	Data = GetData("SELECT * FROM users;")
+	DBUsers = []
+	for i in range(len(Data)):
+		if not Data[i]['ID'] in UserData:
+			RemoveUser(Data[i]['ID'])
+	# for i in range(len(UserData)):
+	# 	RemoveUser(UserData[i])
+
 	# print(UserData)
 	for i in range(len(UserData)):
 		if AddUser(UserData[i]) == True:
 			UpdateContributions(UserData[i])
 			GetContributions(UserData[i])
 			GetRepoDatas(UserData[i])
-		else:
-			RemoveUser(UserData[i])
 
 	return True
 

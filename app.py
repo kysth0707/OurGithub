@@ -68,6 +68,11 @@ def e(request : Request):
 	# IP : request.client.host
 	return ModuleDB.GetNewRepos()
 
+@app.get('/notice')
+def f(request : Request):
+	print(request.client.host)
+	return ModuleDB.GetNotice()
+
 @app.get('/refresh')
 def f(request : Request):
 	print(request.client.host)

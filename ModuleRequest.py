@@ -25,6 +25,9 @@ def GetNewRepositories():
 def GetRecentCommiters():
 	return RequestGet(Domain("/recentcommits/"))
 
+def GetNotice():
+	return RequestGet(Domain("/notice/"))
+
 def SetToken():
 	GithubAPIToken = ""
 	with open("githubapitoken.txt") as f:

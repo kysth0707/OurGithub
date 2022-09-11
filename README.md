@@ -72,4 +72,7 @@
 ![image](https://user-images.githubusercontent.com/83905675/189515818-ef8f225a-adc8-4c85-b1b8-7b81c0b66fc2.png)
 ![image](https://user-images.githubusercontent.com/83905675/189515821-3a95be31-ddfe-4dfd-91b8-559964d49e1c.png)
 
-
+16일차
+> PopUp 완전 완료 및 공지 연동 완료
+> 많은 유저 테스트 필요
+![image](https://user-images.githubusercontent.com/83905675/189537529-cd956ffc-dbde-4846-912f-8394b9d6b2a4.png)

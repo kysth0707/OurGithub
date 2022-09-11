@@ -1,4 +1,3 @@
-from turtle import title
 from PIL import ImageFile
 
 from ModuleRequestFunc import RequestImageGet
@@ -29,6 +28,7 @@ class OutGithubGUI:
 	White = (255, 255, 255)
 	LightGray = (195, 195, 195)
 	NormalGray = (180, 180, 180)
+	Blue = (0, 0, 180)
 	NoticeText = f"[ 공지 ]   공지 테스트"
 
 	screen, ScreenHeight, ScreenWidth = None, None, None
@@ -59,7 +59,7 @@ class OutGithubGUI:
 		self.ThreadCount += 1
 
 		while True:
-			if self.ThreadCount >= 7:
+			if self.ThreadCount >= 8:
 				self.ImageResize()
 				break
 			time.sleep(1)
@@ -90,6 +90,13 @@ class OutGithubGUI:
 		self.NewRepositories = ModuleRequest.GetNewRepositories()
 		self.ThreadCount += 1
 
+	def ThreadNotice(self):
+		try:
+			self.NoticeText = ModuleRequest.GetNotice()['Text']
+		except:
+			self.NoticeText = "공지 불러오기 실패"
+		self.ThreadCount += 1
+
 	def ThreadRecentCommiters(self):
 		time.sleep(1)
 		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\RecentCommit"))
@@ -118,7 +125,7 @@ class OutGithubGUI:
 		self.screen = pygame.display.set_mode((self.ScreenWidth, self.ScreenHeight), pygame.RESIZABLE)
 
 		self.ImageResize()
-		functions = [self.ThreadMyRepo, self.ThreadTopStars, self.ThreadTopCommiters, self.ThreadNewRepositories, self.ThreadRecentCommiters, self.ThreadFavoriteUsers, self.ThreadFollowers]
+		functions = [self.ThreadMyRepo, self.ThreadTopStars, self.ThreadTopCommiters, self.ThreadNewRepositories, self.ThreadRecentCommiters, self.ThreadFavoriteUsers, self.ThreadFollowers, self.ThreadNotice]
 		for i in range(len(functions)):
 			temp = Thread(target=functions[i], daemon=True)
 			temp.start()
@@ -367,13 +374,20 @@ class OutGithubGUI:
 	# ==================================================================
 
 	def DrawMenuUser(self, x, y, Name, Image):
+		if self.CheckClick((x, y), (x + 62, y + 94)):
+			if self.IsPopUp == False:
+				self.PopUp(f"[ User ] {Name}", f"대상 사용자 : {Name}\n\n\n<link>https://github.com/{Name}</link>")
 		Name = ReturnLimitText(Name, 5)
 		self.screen.blit(self.ImageDict['FollowersAndFavoriteUsers'], self.ConvertWidthPercent(x, y))
 		self.screen.blit(Image, self.ConvertWidthPercent(x + 11, y + 10))
 		
 		self.DrawText(Name, (x + 7, y + 65), self.NormalGray, 12,  True)
 
-	def DrawMenuRepository(self, x, y, RepoName, RepoOwner, StarCount):
+	def DrawMenuRepository(self, x, y, RepoName, RepoOwner, StarCount, CreateDate):
+		if self.CheckClick((x, y), (x + 167, y + 55)):
+			if self.IsPopUp == False:
+				self.PopUp(f"[ MyRepository ] {RepoName}",
+				           f"저장소 명 : {RepoName}\n\n\n저장소 소유자 : {RepoOwner}\n\n\n저장소 별 개수 : {StarCount}\n\n\n<link>https://github.com/{RepoOwner}/{RepoName}</link>\n\n생성 일자 : {CreateDate}")
 		RepoName = ReturnLimitText(RepoName, 10)
 		RepoOwner = ReturnLimitText(RepoOwner, 10)
 		self.screen.blit(self.ImageDict['MenuRepository'], self.ConvertWidthPercent(x, y))
@@ -395,9 +409,9 @@ class OutGithubGUI:
 		# Repositories
 		for i in range(4):
 			try:
-				self.DrawMenuRepository(14, 325 + self.AnimationValue() + i * 67, self.MyRepoName[i], self.MyID, self.MyRepoStar[i])
+				self.DrawMenuRepository(14, 325 + self.AnimationValue() + i * 67, self.MyRepoName[i], self.MyID, self.MyRepoStar[i], self.MyRepoTime[i])
 			except:
-				self.DrawMenuRepository(14, 325 + self.AnimationValue() + i * 67, "?", "?", "?")
+				self.DrawMenuRepository(14, 325 + self.AnimationValue() + i * 67, "?", "?", "?", "?")
 
 		# Favorites
 		for i in range(3):
@@ -426,6 +440,14 @@ class OutGithubGUI:
 
 		self.DrawPopUp()
 
+		if not self.IsPopUp:
+			if self.CheckClick((0, 733), (273, 800)):
+				self.PopUp("About & Credit",
+						   "제작자 : kysth0707 ( 김태형 )\n<link>https://github.com/kysth0707</link>\n\n\n버그 제보 및 건의하기\n<link>https://github.com/kysth0707/OurGithub/issues</link>\n\n\n서버지원\n<link>https://github.com/banksemi</link>\n\n\n개발자 메세지\n\n안녕하세요 김태형입니다! 서로의 깃허브 현황을 알아볼 수 있는 프로그램을 만들게 되었습니다.\n서로의 깃허브에 들어가 별도 눌러주고 함께 커밋도 열심히해보아서 잔디를 계속 채워봅시다!")
+		if self.IsPopUp:
+			if self.CheckClick((902, 73), (924, 95)):
+				self.IsPopUp = False
+
 	# ==================================================================
 
 	IsPopUp = False
@@ -445,7 +467,14 @@ class OutGithubGUI:
 			Subtitles = self.PopUpSubtitle.split('\n')
 			
 			for i in range(len(Subtitles)):
-				self.DrawText(Subtitles[i], (68, 140 + i * 20), self.Black, 17)
+				if "<link>" in Subtitles[i]:
+					URLValue = str(Subtitles[i])[6:len(Subtitles[i]) - 7]
+					self.DrawText(URLValue, (68, 140 + i * 20), self.Blue, 17)
+					if self.IsPopUp:
+						if self.CheckClick((68, 140 + i * 20), (800, 140 + (i + 1) * 20)):
+							os.system(f"start \"\" {URLValue}")
+				else:
+					self.DrawText(Subtitles[i], (68, 140 + i * 20), self.Black, 17)
 
 	# ==================================================================
 
@@ -506,7 +535,7 @@ class OutGithubGUI:
 					if self.IsPopUp:
 						self.IsPopUp = False
 					else:
-						self.PopUp("ㅎㅇ", "1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\nasdf")
+						self.PopUp("test", "1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\nasdf\n테스ㅡ트\n<link>https://www.naver.com/</link>")
 
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1:
