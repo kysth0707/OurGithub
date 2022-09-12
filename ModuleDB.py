@@ -185,10 +185,10 @@ def Refresh():
 
 	# print(UserData)
 	for i in range(len(UserData)):
-		if AddUser(UserData[i]) == True:
-			UpdateContributions(UserData[i])
-			GetContributions(UserData[i])
-			GetRepoDatas(UserData[i])
+		AddUser(UserData[i])
+		UpdateContributions(UserData[i])
+		GetContributions(UserData[i])
+		GetRepoDatas(UserData[i])
 
 	return True
 

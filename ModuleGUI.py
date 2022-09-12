@@ -505,7 +505,7 @@ class OutGithubGUI:
 
 		self.DrawScreen()
 
-		self.ShowMousePos()
+		# self.ShowMousePos()
 
 		pygame.display.update()
 
