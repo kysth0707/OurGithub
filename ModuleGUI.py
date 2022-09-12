@@ -68,6 +68,9 @@ class OutGithubGUI:
 		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\Favorite"))
 		for b in a:
 			os.remove(ReturnPos(f"\\imgs\\profiles\\Favorite\\{b}"))
+		a = os.listdir(ReturnPos(f"\\imgs\\edited\\Favorite"))
+		for b in a:
+			os.remove(ReturnPos(f"\\imgs\\edited\\Favorite\\{b}"))
 		ModuleRequest.ThreadFavoriteUsers()
 		self.ThreadCount += 1
 
@@ -75,6 +78,9 @@ class OutGithubGUI:
 		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\Followers"))
 		for b in a:
 			os.remove(ReturnPos(f"\\imgs\\profiles\\Followers\\{b}"))
+		a = os.listdir(ReturnPos(f"\\imgs\\edited\\Followers"))
+		for b in a:
+			os.remove(ReturnPos(f"\\imgs\\edited\\Followers\\{b}"))
 		ModuleRequest.ThreadFollowers(self.MyID)
 		self.ThreadCount += 1
 
@@ -102,6 +108,9 @@ class OutGithubGUI:
 		a = os.listdir(ReturnPos(f"\\imgs\\profiles\\RecentCommit"))
 		for b in a:
 			os.remove(ReturnPos(f"\\imgs\\profiles\\RecentCommit\\{b}"))
+		a = os.listdir(ReturnPos(f"\\imgs\\edited\\RecentCommit"))
+		for b in a:
+			os.remove(ReturnPos(f"\\imgs\\edited\\RecentCommit\\{b}"))
 		
 		self.RecentCommiters = ModuleRequest.GetRecentCommiters()
 		for i in range(len(self.RecentCommiters)):
