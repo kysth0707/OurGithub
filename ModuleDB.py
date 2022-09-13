@@ -8,6 +8,16 @@ import os
 def ReturnPos(loc : str):
 	return os.getcwd() + loc
 
+def IsABCandNum(txt):
+	CheckTexts = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	CheckTexts = list(CheckTexts)
+	for i in range(len(txt)):
+		if txt[i] in CheckTexts:
+			pass
+		else:
+			return False
+	return True
+
 lock = threading.Lock()
 
 pw=""
@@ -129,11 +139,15 @@ def UpdateContributions(ID):
 
 
 def GetContributions(ID):
+	if not IsABCandNum(ID):
+		return False
 	Value = GetData(f"SELECT * FROM contris WHERE ID = '{ID}';")
 	return Value
 	# pass
 
 def GetRepoDatas(ID):
+	if not IsABCandNum(ID):
+		return False
 	Value = GetData(f"SELECT * FROM repos WHERE ID = '{ID}';")
 	# print(Value)
 	if len(Value) != 0:
