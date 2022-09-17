@@ -25,8 +25,9 @@ def Get(ID):
 	for i in range(7):
 		Contributions[i] = 0
 
-	datas = soup.select("#js-pjax-container > div.container-xl.px-3.px-md-4.px-lg-5 > div > div.Layout-main > div:nth-child(2) > div > div.mt-4.position-relative > div.js-yearly-contributions > div > div > div > svg")
+	datas = soup.select("body > div.application-main > main > div.container-xl.px-3.px-md-4.px-lg-5 > div > div.Layout-main > div:nth-child(2) > div > div.mt-4.position-relative > div.js-yearly-contributions > div > div > div > svg")
 	datas = str(datas).split('\n')
+	# print(datas)
 	for data in datas:
 		for i in range(7):
 			if ThisWeeks[i] in data:
