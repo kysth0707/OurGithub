@@ -1,3 +1,6 @@
 __pycache__/*
 pw.txt
 githubapitoken.txt
+AutoUpdate/Download/*
+AutoUpdate/ZipExtract/*
+main.exe
