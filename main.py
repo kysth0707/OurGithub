@@ -1,19 +1,6 @@
 import ModuleGUI
 import os
 
-import time
-class Timer:
-	lasttime = 0
-	def __init__(self) -> None:
-		self.lasttime = time.time()
-
-	def Check(self):
-		return time.time() - self.lasttime
-
-	def Update(self):
-		self.lasttime = time.time()
-
-
 
 def ReturnPos(loc : str):
 	return os.getcwd() + loc
@@ -33,11 +20,6 @@ except:
 	exit()
 
 
-
-# MyTimer = Timer()
-
 GUI = ModuleGUI.OutGithubGUI(User)
 while True:
 	GUI.Update()
-	# print(f"{1 / MyTimer.Check()} fps")
-	# MyTimer.Update()

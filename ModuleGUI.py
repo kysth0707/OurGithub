@@ -8,6 +8,7 @@ import pygame
 from PIL import Image
 import os
 import time
+import math
 from ModuleGUIFunc import LastCommitRefresh, MyRepoRefresh, ReturnLimitText, GetDatas
 from ModuleRequestFunc import RequestImageGet, RequestGet
 import ModuleRequest
@@ -15,6 +16,18 @@ from threading import Thread
 
 def ReturnPos(loc : str):
 	return os.getcwd() + loc
+
+import time
+class Timer:
+	lasttime = 0
+	def __init__(self) -> None:
+		self.lasttime = time.time()
+
+	def Check(self):
+		return time.time() - self.lasttime
+
+	def Update(self):
+		self.lasttime = time.time()
 
 class OutGithubGUI:
 	Run = True
@@ -33,7 +46,7 @@ class OutGithubGUI:
 
 	screen, ScreenHeight, ScreenWidth = None, None, None
 	clock = None
-	ImageName = ["Background", "FollowersAndFavoriteUsers", "MenuRepository", "NewRepositories", "RecentCommit", "TopCommit", "TopStar", "MyProfile", "PopUp"]
+	ImageName = ["Background", "FollowersAndFavoriteUsers", "MenuRepository", "NewRepositories", "RecentCommit", "TopCommit", "TopStar", "MyProfile", "PopUp", "Loading"]
 	ImageResizeDict = {"MyProfile" : (75, 75)}
 	ImageDict = {}
 	FollowersDict = {}
@@ -51,6 +64,9 @@ class OutGithubGUI:
 
 	ThreadCount = 0
 	Clicked = False
+
+	MyTimer = None
+	ShowFPS = False
 
 	def ThreadMyRepo(self):
 		ModuleRequest.GetRepoDatas(self.MyID)
@@ -126,6 +142,7 @@ class OutGithubGUI:
 		self.LastCommitDate = LastCommitRefresh()
 
 		pygame.init()
+		self.MyTimer = Timer()
 
 		self.clock = pygame.time.Clock()
 
@@ -511,8 +528,13 @@ class OutGithubGUI:
 			if time.time() - self.StartTime > 1:
 				self.IsAnimation = False
 
-
 		self.DrawScreen()
+
+		if self.ShowFPS:
+			FPS = f"{math.floor(1 / self.MyTimer.Check())} fps"
+			FPSText = pygame.font.SysFont("malgungothic", int(16 * self.WidthPercent()), True).render(FPS, True, (0, 0, 255))
+			self.screen.blit(FPSText, (0, 0))
+			self.MyTimer.Update()
 
 		# self.ShowMousePos()
 
@@ -545,7 +567,8 @@ class OutGithubGUI:
 						self.IsPopUp = False
 					else:
 						self.PopUp("test", "1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\nasdf\n테스ㅡ트\n<link>https://www.naver.com/</link>")
-
+				elif event.key == pygame.K_F12:
+					self.ShowFPS = not self.ShowFPS
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1:
 					self.Clicked = True
